@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>مامە ڤانە - Mama Vana (Kick The Boss)</title>
+
+    <!-- Google Fonts for Kurdish Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS Stylesheets -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/customizer.css">
+    <link rel="stylesheet" href="css/dev_editor.css">
+    <link rel="stylesheet" href="css/game.css">
+</head>
+
+<body>
+
+    <!-- ===============================================
+         ROTATE SCREEN OVERLAY (Portrait Mode Warning)
+         =============================================== -->
+    <div id="rotate-overlay" aria-live="polite" role="alert">
+        <div class="rotate-overlay-inner">
+            <div class="rotate-phone-wrap">
+                <div class="rotate-phone-icon">📱</div>
+                <div class="rotate-arrow-icon">↻</div>
+            </div>
+            <h2 class="rotate-title">مۆبایلەکەت بسوڕێنە!</h2>
+            <p class="rotate-desc">یاری مامە ڤانە تەنها لە ئاسۆیی (Landscape) کاردەکات</p>
+            <p class="rotate-sub">تکایە مۆبایلەکەت بگەڕێنە لای هێل بۆ دەستپێکردنی یاری 🎮</p>
+            <div class="rotate-stars">
+                <span>⭐</span><span>🎮</span><span>⭐</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-container">
+
+        <!-- ==============================================
+             SCREEN 1: LOADING SCREEN
+             ============================================== -->
+        <section id="screen-loading" class="game-screen active">
+            <div class="loading-logo-box">
+                <h1 class="game-title-main">مامە ڤانە</h1>
+                <p class="game-subtitle">Kick The Boss - وەشانی کوردی سۆرانی</p>
+            </div>
+
+            <div class="loading-bar-wrapper">
+                <div id="loading-bar-fill" class="loading-bar-fill"></div>
+            </div>
+
+            <div id="loading-percentage" class="loading-percentage">0%</div>
+            <div id="loading-status-text" class="loading-status-text">ئامادەکردنی یاری و کەرەستەکان...</div>
+        </section>
+
+        <!-- ==============================================
+             SCREEN 2: MAIN MENU SCREEN (HORIZONTAL LAYOUT)
+             ============================================== -->
+        <section id="screen-menu" class="game-screen">
+
+            <!-- Dev button - absolutely positioned top-left (RTL = visual top-right) -->
+            <button id="btn-menu-dev-corner"
+                class="btn-cartoon btn-green btn-icon-corner btn-open-dev-editor menu-dev-btn"
+                title="ستۆدیۆی پەرەپێدەر">
+                🛠️
+            </button>
+            <button id="btn-menu-fullscreen" class="btn-cartoon btn-blue btn-icon-corner menu-fullscreen-btn"
+                title="کردنەوەی شاشەی تەواو" aria-label="کردنەوەی شاشەی تەواو">
+                <img class="fullscreen-icon" src="assets/icons/fullscreen.svg" alt="" aria-hidden="true" draggable="false">
+            </button>
+
+            <!-- LEFT COLUMN: Character + Game Title + Description -->
+            <div class="menu-left-col">
+                <div class="menu-title-area">
+                    <div class="menu-title-row">
+                        <h1 class="game-title-main">مامە ڤانە</h1>
+                        <!-- +18 badge — only visible when adult mode is active -->
+                        <span id="menu-age-badge" class="menu-age-badge" style="display:none;">+18</span>
+                    </div>
+                    <p class="game-subtitle">پیاوە فرەچەشنەکە، پیاوە ئاڵتونیەکە</p>
+                    <p class="game-desc">کاتێکی خۆش بەسەربەرە لەگەڵ کەسایەتیەکی ناوداری سۆشیاڵ میدیا </p>
+                </div>
+                <div class="menu-character-stage">
+                    <div class="menu-character-shadow"></div>
+                    <div id="menu-character-preview" class="menu-character-preview"></div>
+                    <div class="menu-pedestal"></div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Currency + Buttons -->
+            <div class="menu-right-col">
+                <!-- Currency display at the top -->
+                <div class="menu-currency-box">
+                    <div class="currency-badge coins-badge">
+                        <span>💰</span>
+                        <span class="coins-counter-val">0</span>
+                    </div>
+                    <div class="currency-badge diamonds-badge">
+                        <span>💎</span>
+                        <span class="diamonds-counter-val">0</span>
+                    </div>
+                </div>
+
+                <!-- Menu Buttons -->
+                <nav class="menu-buttons-list">
+                    <button id="btn-menu-play" class="btn-cartoon btn-red">
+                        <span>🎮</span> یاری بکە
+                    </button>
+
+                    <button id="btn-menu-customize" class="btn-cartoon btn-blue">
+                        <span>🎨</span> دروستکردنی کەسایەتی
+                    </button>
+
+
+                    <button id="btn-menu-settings" class="btn-cartoon btn-purple">
+                        <span>⚙️</span> ڕێکخستنەکان
+                    </button>
+
+                    <button id="btn-menu-about" class="btn-cartoon btn-dark">
+                        <span>ℹ️</span> دەربارەی یاری
+                    </button>
+                </nav>
+            </div>
+
+            <div class="radio-widget" data-radio-widget>
+                <div class="radio-antenna"></div>
+                <div class="radio-display">
+                    <span class="radio-display-dot"></span>
+                    <span data-radio-title>مامە ڤانە FM</span>
+                </div>
+                <div class="radio-speakers">
+                    <span></span><span></span>
+                </div>
+                <div class="radio-controls">
+                    <button class="radio-control-btn" data-radio-action="previous" title="گۆرانی پێشوو"><span class="emoji-icon">⏮</span></button>
+                    <button class="radio-control-btn radio-play-btn" data-radio-action="toggle" title="دەستپێکردن و ڕاگرتن"><span class="emoji-icon">▶</span></button>
+                    <button class="radio-control-btn" data-radio-action="next" title="گۆرانی داهاتوو"><span class="emoji-icon">⏭</span></button>
+                </div>
+                <label class="radio-volume" title="دەنگی ڕادیۆ">
+                    <span class="emoji-icon">🔊</span>
+                    <input type="range" min="0" max="1" step="0.01" value="0.25" data-radio-volume aria-label="دەنگی ڕادیۆ">
+                </label>
+            </div>
+        </section>
+
+        <!-- ==============================================
+             SCREEN 3: CHARACTER CUSTOMIZER
+             ============================================== -->
+        <section id="screen-customizer" class="game-screen">
+            <div class="customizer-top-bar">
+                <button id="btn-customizer-back" class="btn-cartoon btn-red customizer-exit-btn"
+                    style="padding: 8px 18px; font-size: 0.95rem;">
+                    🚪 دەرچوون
+                </button>
+                <div class="customizer-title-group">
+                    <h2 class="customizer-title">🎨 ڕێکخستنی کەسایەتی مامە ڤانە</h2>
+                </div>
+                <div class="customizer-top-right">
+                    <div class="customizer-currency-pill">
+                        <span class="customizer-currency-badge"><span class="emoji-icon">💰</span> <span id="customizer-coins-count"
+                                class="coins-counter-val">0</span></span>
+                        <span class="customizer-currency-badge"><span class="emoji-icon">💎</span> <span id="customizer-diamonds-count"
+                                class="diamonds-counter-val">0</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="customizer-layout">
+                <!-- Live Character Preview Side -->
+                <div class="customizer-preview-col">
+                    <!-- Randomize button positioned at top-right of preview window -->
+                    <button id="btn-randomize-char" class="btn-cartoon btn-blue btn-randomize-preview"
+                        title="هەڵبژاردنی هەڕەمەکی (تەنها کراوەکان)">
+                        🎲 جلوبەرگی هەڕەمەکی
+                    </button>
+
+                    <!-- Exclusive Background Button (Top-Left of Character Review) -->
+                    <div id="customizer-preview-set-bg" class="preview-set-bg-wrap" style="display:none;">
+                        <button id="btn-preview-exclusive-bg" class="btn-cartoon btn-purple preview-set-bg-btn"
+                            title="پیشاندانی تەواوی پاشبنەمای تایبەت">
+                            <img id="preview-set-bg-img" class="preview-btn-bg-thumb" src="" alt="پاشبنەما" draggable="false">
+                            <span>🌄 پاشبنەما</span>
+                        </button>
+                    </div>
+
+                    <!-- Effect Toggle Button (Bottom-Right of Character Review) -->
+                    <div id="customizer-preview-effect-toggle" class="preview-effect-toggle-wrap" style="display:none;">
+                        <button id="btn-preview-effect-toggle" class="btn-cartoon btn-green preview-effect-toggle-btn"
+                            title="چالاککردن یان ناچالاککردنی ئیفێکتی تایبەت">
+                            <span id="preview-effect-toggle-text">✨ ئیفێکت : چالاکە</span>
+                        </button>
+                    </div>
+
+                    <!-- Preview Buy Bar (bottom-left, shown when locked item selected) -->
+                    <div id="customizer-preview-buy-bar" class="customizer-preview-buy-bar" style="display:none;">
+                        <div id="customizer-preview-price-display" class="preview-price-display">🛒 هەڵبژێرە</div>
+                        <button id="btn-preview-buy" class="btn-cartoon btn-gold preview-buy-btn">
+                            🛍️ کڕین
+                        </button>
+                    </div>
+
+                    <div id="customizer-preview-character" class="customizer-preview-stage"></div>
+                </div>
+
+                <!-- Customization Drawer & Items Grid -->
+                <div class="customizer-drawer-col">
+                    <div id="customizer-categories" class="customizer-categories"></div>
+                    <div id="customizer-items-grid" class="customizer-items-grid"></div>
+                </div>
+            </div>
+
+            <!-- Customizer Purchase / Unlock Confirmation Modal -->
+            <div id="customizer-buy-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-content customizer-modal-box">
+                    <div class="customizer-modal-header">
+                        <span id="customizer-modal-rank-badge" class="modal-rank-badge">ئاسایی</span>
+                        <h3 id="customizer-modal-title" class="customizer-modal-title">کڕینی کەرەستە</h3>
+                    </div>
+                    <div class="customizer-modal-body">
+                        <div id="customizer-modal-preview-wrapper" class="customizer-modal-preview">
+                            <img id="customizer-modal-img" src="" alt="preview">
+                        </div>
+                        <p id="customizer-modal-desc" class="customizer-modal-desc"></p>
+                        <div class="customizer-modal-price-box">
+                            <span>نرخ:</span>
+                            <span id="customizer-modal-price-display" class="modal-price-tags"></span>
+                        </div>
+                    </div>
+                    <div class="customizer-modal-actions">
+                        <button id="btn-modal-cancel" class="btn-cartoon btn-purple" style="padding: 8px 20px;">
+                            پاشگەزبوونەوە
+                        </button>
+                        <button id="btn-modal-confirm-buy" class="btn-cartoon btn-gold" style="padding: 8px 24px;">
+                            کڕین 🛍️
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==============================================
+             SCREEN 4: VISUAL DEV STUDIO (PARTS & ATTACKS)
+             ============================================== -->
+        <section id="screen-dev-editor" class="game-screen">
+            <div class="dev-top-bar">
+                <button id="btn-dev-editor-back" class="btn-cartoon btn-purple"
+                    style="padding: 8px 16px; font-size: 0.95rem;">
+                    ◀️ گەڕانەوە بۆ مێنیو
+                </button>
+                <h2 class="dev-title">🛠️ ستۆدیۆی پەرەپێدەر (Dev Studio)</h2>
+                <div></div>
+            </div>
+
+            <!-- Mode switch tabs: Body Parts vs Attacks vs Shooting vs Voices & Sounds -->
+            <div class="dev-mode-tabs">
+                <button id="tab-dev-mode-body" class="dev-mode-tab active">
+                    👤 ڕێکخستنی ئەندامەکانی لەش (Body Parts)
+                </button>
+                <button id="tab-dev-mode-attacks" class="dev-mode-tab">
+                    💥 ڕێکخستنی هێرش و فڕەیمەکان (Attacks & Frames)
+                </button>
+                <button id="tab-dev-mode-shooting" class="dev-mode-tab">
+                    🔫 ستۆدیۆی چەکەکان (Firearms Studio)
+                </button>
+                <button id="tab-dev-mode-sounds" class="dev-mode-tab">
+                    🎙️ ستۆدیۆی دەنگ و قسەکان (Voices & Sounds)
+                </button>
+            </div>
+
+            <div class="dev-layout">
+                <!-- Visual Grid & Drag Canvas -->
+                <div id="dev-editor-stage" class="dev-stage-col">
+                    <!-- Yellow Blueprint Ghost (Standard Reference Alignment) -->
+                    <div id="dev-blueprint-ghost" class="dev-blueprint-ghost"></div>
+
+                    <div class="dev-stage-wrapper">
+                        <!-- Composite character rendered here -->
+                    </div>
+                    <!-- Hitbox visual overlay -->
+                    <div id="dev-hitbox-overlay" class="dev-hitbox-overlay"></div>
+                    <!-- Attack preview fx (Draggable on stage) -->
+                    <div id="dev-attack-fx" class="dev-attack-fx" style="cursor: move;"></div>
+
+                    <!-- Cute CUT Interactive Canvas Bounding Box & 8 Transform Handles -->
+                    <div id="cutecut-transform-box" class="cutecut-transform-box">
+                        <div class="cutecut-rot-pin"></div>
+                        <div class="cutecut-rot-handle" title="سوڕاندن (Rotate)"></div>
+                        <div class="cutecut-handle nw" data-dir="nw"></div>
+                        <div class="cutecut-handle n" data-dir="n"></div>
+                        <div class="cutecut-handle ne" data-dir="ne"></div>
+                        <div class="cutecut-handle e" data-dir="e"></div>
+                        <div class="cutecut-handle se" data-dir="se"></div>
+                        <div class="cutecut-handle s" data-dir="s"></div>
+                        <div class="cutecut-handle sw" data-dir="sw"></div>
+                        <div class="cutecut-handle w" data-dir="w"></div>
+                        <div id="cutecut-box-badge" class="cutecut-box-badge">Layer 1</div>
+                    </div>
+
+                    <div class="dev-stage-tip">💡 بە دڵی خۆت کەرەستەکان لەسەر شاشە ڕابکێشە، گەورە و بچووکی بکە و
+                        بیجوڵێنە (Cute CUT Studio)</div>
+                </div>
+
+                <!-- Control Panel (Body Parts Mode) -->
+                <div id="dev-controls-body" class="dev-controls-col">
+                    <div class="dev-section-title">📂 بەش و ئەندامی دیاریکراو</div>
+
+                    <div class="dev-row">
+                        <label
+                            style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: #1a162b; padding: 6px 10px; border-radius: 10px; border: 1px solid #f1c40f; margin-bottom: 8px;">
+                            <input type="checkbox" id="dev-toggle-blueprint" checked
+                                style="width: 16px; height: 16px; accent-color: #f1c40f;">
+                            <span style="color: #f1c40f; font-weight: 800;">📐 پیشاندانی نەخشەی زەردی بنەڕەت (Yellow
+                                Blueprint Ghost)</span>
+                        </label>
+                    </div>
+
+                    <div class="dev-row">
+                        <label for="dev-cat-select">بەشی لەش (Category):</label>
+                        <select id="dev-cat-select" class="dev-select"></select>
+                    </div>
+
+                    <div class="dev-row">
+                        <label for="dev-item-select">نموونەی دیاریکراو (Specific Item):</label>
+                        <div class="dev-item-switcher">
+                            <button id="btn-dev-prev-item" class="btn-cartoon btn-blue dev-btn-small">◀️ پێشوو</button>
+                            <select id="dev-item-select" class="dev-select"></select>
+                            <button id="btn-dev-next-item" class="btn-cartoon btn-blue dev-btn-small">داهاتوو
+                                ▶️</button>
+                        </div>
+                    </div>
+
+                    <div class="dev-section-title" style="margin-top: 14px;">📐 شوێن و قەبارە (Coordinates & Transforms)
+                    </div>
+
+                    <div class="dev-row">
+                        <label>شوێنی ئاسۆیی (X Position):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-slider-x">
+                            <input type="number" id="dev-input-x" class="dev-input-num">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>شوێنی ستوونی (Y Position):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-slider-y">
+                            <input type="number" id="dev-input-y" class="dev-input-num">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>قەبارەی گشتی (Scale Zoom):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-slider-scale">
+                            <input type="number" id="dev-input-scale" class="dev-input-num">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>پانی / وەرگێڕان (Scale X / Flip):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-slider-scaleX">
+                            <input type="number" id="dev-input-scaleX" class="dev-input-num">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>درێژی (Scale Y):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-slider-scaleY">
+                            <input type="number" id="dev-input-scaleY" class="dev-input-num">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>سوڕانەوە (Rotation Angle):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-slider-rotation">
+                            <input type="number" id="dev-input-rotation" class="dev-input-num">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>تەبەقە و ڕیزبەندی پێش و پاش (Z-Index):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-slider-zindex">
+                            <input type="number" id="dev-input-zindex" class="dev-input-num">
+                        </div>
+                    </div>
+
+                    <!-- Mirroring Controls (Dual Eyes / Dual Ears) -->
+                    <div class="dev-section-title" style="margin-top: 14px;">🪞 جووتکردن و هاوشێوەکردن (Mirroring /
+                        Duplicate Pair)</div>
+                    <div class="dev-row">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="dev-toggle-mirror"
+                                style="width: 18px; height: 18px; accent-color: #2ed573;">
+                            <span>چالاککردنی جووتکردن (Enable Mirror Pair)</span>
+                        </label>
+                    </div>
+
+                    <div id="dev-mirror-options-box"
+                        style="display: none; background: #141021; padding: 12px; border-radius: 14px; border: 2px solid #3d315c; margin-bottom: 10px;">
+                        <div class="dev-row">
+                            <label>دووری نێوان هەردوو دانەکە (Spread Distance):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="dev-slider-mirror-dist">
+                                <input type="number" id="dev-input-mirror-dist" class="dev-input-num">
+                            </div>
+                        </div>
+
+                        <div class="dev-row">
+                            <label>سوڕانەوە و لارکردنەوەی هەردوو دانەکە پێکەوە (Tilt Pair Angle):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="dev-slider-mirror-tilt" min="-90" max="90" step="1">
+                                <input type="number" id="dev-input-mirror-tilt" class="dev-input-num" min="-90"
+                                    max="90">
+                            </div>
+                        </div>
+
+                        <div class="dev-row">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="dev-toggle-mirror-flip"
+                                    style="width: 16px; height: 16px; accent-color: #2ed573;">
+                                <span>گۆڕینی لا / دەستەچەپ و ڕاست (Swap Left & Right Sides)</span>
+                            </label>
+                        </div>
+
+                        <div class="dev-row" style="margin-bottom: 0;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="dev-toggle-mirror-rot-opp" checked
+                                    style="width: 16px; height: 16px; accent-color: #2ed573;">
+                                <span>سوڕانەوەی پێچەوانەی هاوتا (Symmetrical Inward/Outward Rotate)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="dev-scope-group">
+                        <label>
+                            <input type="radio" name="dev-scope" id="dev-scope-item" checked>
+                            🎯 تایبەت تەنها بۆ ئەم دانەیە (Single Item Only)
+                        </label>
+                        <label>
+                            <input type="radio" name="dev-scope" id="dev-scope-category">
+                            📂 هەموو کەرەستەکانی ئەم بەشە (All in Category)
+                        </label>
+                    </div>
+
+                    <!-- Developer Cheat Section -->
+                    <div class="dev-section-title" style="margin-top: 14px;">⚡ کۆدی یارمەتیدەر (Developer Cheats)</div>
+                    <div class="dev-cheats-grid">
+                        <button id="btn-cheat-add-coins" class="btn-cartoon btn-gold dev-btn-cheat">💰 +1000
+                            سکە</button>
+                        <button id="btn-cheat-add-diamonds" class="btn-cartoon btn-blue dev-btn-cheat">💎 +500
+                            ئەڵماس</button>
+                        <button id="btn-cheat-unlock-all" class="btn-cartoon btn-green dev-btn-cheat">🔓 کردنەوەی هەموو
+                            شتێک</button>
+                        <button id="btn-cheat-reset-econ" class="btn-cartoon btn-red dev-btn-cheat">🔄 سفرکردنەوەی
+                            دراوەکان</button>
+                    </div>
+
+                    <div class="dev-actions-grid">
+                        <button id="btn-dev-export" class="btn-cartoon btn-blue"
+                            style="font-size: 1rem; grid-column: span 2;">
+                            📋 دەرهێنانی کۆد (Export Coordinates)
+                        </button>
+                        <button id="btn-dev-reset" class="btn-cartoon btn-red"
+                            style="font-size: 0.85rem; grid-column: span 2;">
+                            🔄 گەڕانەوە بۆ ڕێکخستنی بنەڕەتی کۆد
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Control Panel (Cute CUT Style Attacks & Animation Studio) -->
+                <div id="dev-controls-attacks" class="dev-controls-col" style="display: none;">
+                    <div class="dev-section-title">🎬 ستۆدیۆی هێرش و تایملاین (Cute CUT Studio)</div>
+
+                    <div class="dev-row">
+                        <label for="dev-attack-select">هەڵبژاردنی هێرش (Attack Project):</label>
+                        <select id="dev-attack-select" class="dev-select"></select>
+                    </div>
+
+                    <!-- Two-Sided (Mirror) Attack Control in Gameplay -->
+                    <div class="dev-row">
+                        <label
+                            style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: rgba(39, 174, 96, 0.15); padding: 8px 12px; border-radius: 12px; border: 1.5px solid #2ecc71;">
+                            <input type="checkbox" id="dev-attack-allow-mirror"
+                                style="width: 18px; height: 18px; accent-color: #2ecc71;">
+                            <span style="color: #2ecc71; font-weight: 900; font-size: 0.92rem;">⚔️ لێدانی دوو لایەنە
+                                (Two-Sided Left/Right Attack)</span>
+                        </label>
+                    </div>
+
+                    <!-- Live Left Mirror Toggle -->
+                    <div class="dev-row">
+                        <label
+                            style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: #1f1836; padding: 6px 12px; border-radius: 12px; border: 1.5px solid #9b59b6;">
+                            <input type="checkbox" id="dev-toggle-mirror-preview"
+                                style="width: 17px; height: 17px; accent-color: #9b59b6;">
+                            <span style="color: #dcdde1; font-weight: 800;">🪞 پیشاندانی ڕاستەوخۆ لە لای چەپ (Live Left
+                                Mirror Preview)</span>
+                        </label>
+                    </div>
+
+                    <!-- Mouth Talking Checkbox (Fixed) -->
+                    <div class="dev-row">
+                        <label
+                            style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.82rem; color: #a4b0be;">
+                            <input type="checkbox" id="dev-toggle-test-mouth"
+                                style="width: 15px; height: 15px; accent-color: #ffa502;">
+                            <span>چالاککردنی جوڵەی دەم لە کاتی تاقیکردنەوە (Play Talking Mouth on Test)</span>
+                        </label>
+                    </div>
+
+                    <!-- Cute CUT Multi-Track Timeline -->
+                    <div class="dev-section-title" style="margin-top: 10px;">🎞️ تایملاینی چینەکان (Multi-Track
+                        Timeline)</div>
+
+                    <div class="cutecut-timeline-box">
+                        <div id="cutecut-ruler" class="cutecut-ruler-header">
+                            <div class="cutecut-ruler-ticks">
+                                <span>0:00</span><span>0:05</span><span>0:10</span><span>0:15</span><span>0:20</span><span>0:25</span><span>0:30</span>
+                            </div>
+                            <div id="cutecut-playhead" class="cutecut-playhead-needle"></div>
+                        </div>
+
+                        <!-- Tracks Stack -->
+                        <div id="cutecut-tracks-container" class="cutecut-tracks-list"></div>
+                    </div>
+
+                    <!-- Cute CUT Bottom Action Toolbar -->
+                    <div class="cutecut-toolbar">
+                        <button id="btn-cutecut-add-track" class="btn-cartoon btn-green cutecut-tool-btn"
+                            title="زیادکردنی چین">➕ چین</button>
+                        <button id="btn-cutecut-dup-track" class="btn-cartoon btn-blue cutecut-tool-btn"
+                            title="لەبەرگرتنەوە">📋 کۆپی</button>
+                        <button id="btn-cutecut-del-track" class="btn-cartoon btn-red cutecut-tool-btn"
+                            title="سڕینەوە">🗑️ سڕینەوە</button>
+                        <button id="btn-cutecut-toggle-trans" class="btn-cartoon btn-gold cutecut-tool-btn"
+                            title="جوڵەی خاڵی A بۆ B">📈 جوڵە (A➔B)</button>
+                        <button id="btn-cutecut-rot90" class="btn-cartoon btn-purple cutecut-tool-btn"
+                            title="سوڕاندن">🔄 ٩٠°</button>
+                        <button id="btn-cutecut-flip-h" class="btn-cartoon btn-purple cutecut-tool-btn"
+                            title="هەڵگەڕاندنەوەی ئاسۆیی">↔️ Flip H</button>
+                        <button id="btn-cutecut-layer-up" class="btn-cartoon btn-dark cutecut-tool-btn"
+                            title="بەرەو پێشەوە">⬆️ پێشەوە</button>
+                        <button id="btn-cutecut-layer-down" class="btn-cartoon btn-dark cutecut-tool-btn"
+                            title="بەرەو دواوە">⬇️ دواوە</button>
+                    </div>
+
+                    <!-- Playback & Export Grid -->
+                    <div class="dev-actions-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 6px;">
+                        <button id="btn-dev-test-attack-all" class="btn-cartoon btn-red" style="font-size: 0.88rem;">
+                            🎬 لێدانی ئەنیمەیشن (Play All)
+                        </button>
+                        <button id="btn-dev-test-attack-single" class="btn-cartoon btn-gold"
+                            style="font-size: 0.88rem;">
+                            🎯 تەنها ئەم چینە (Solo)
+                        </button>
+                    </div>
+                    <div class="dev-actions-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 8px;">
+                        <button id="btn-dev-test-attack-mirror" class="btn-cartoon btn-purple"
+                            style="font-size: 0.85rem;">
+                            🪞 تاقیکردنەوە لە چەپ
+                        </button>
+                        <button id="btn-dev-export-attack" class="btn-cartoon btn-blue" style="font-size: 0.85rem;">
+                            📋 کۆپیکردنی کۆد
+                        </button>
+                    </div>
+
+                    <!-- Point A -> Point B Keyframe Motion Transition Panel -->
+                    <div id="cutecut-transition-panel" class="cutecut-trans-panel">
+                        <div class="dev-section-title" style="margin-bottom: 4px;">🚀 جوڵەی خاڵی دەستپێک بۆ کۆتایی
+                            (Point A ➔ Point B)</div>
+
+                        <div class="dev-row">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="cutecut-trans-enabled"
+                                    style="width: 17px; height: 17px; accent-color: #ffa502;">
+                                <span style="color: #ffa502; font-weight: 800;">چالاککردنی جوڵەی Point A بۆ Point B بۆ
+                                    ئەم چینە</span>
+                            </label>
+                        </div>
+
+                        <div class="dev-actions-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 6px;">
+                            <button id="btn-cutecut-set-start-a" class="btn-cartoon btn-blue dev-btn-small">📍 ئێستا وەک
+                                خاڵی A</button>
+                            <button id="btn-cutecut-set-end-b" class="btn-cartoon btn-green dev-btn-small">🎯 ئێستا وەک
+                                خاڵی B</button>
+                        </div>
+
+                        <div class="dev-row">
+                            <label>شێوازی خێرایی جوڵە (Easing Curve):</label>
+                            <select id="cutecut-trans-easing" class="dev-select">
+                                <option value="easeOutQuad">نەرمبوون لە کۆتایی (Ease Out - Recommended)</option>
+                                <option value="easeInOut">نەرم لە دەستپێک و کۆتایی (Ease In-Out)</option>
+                                <option value="bounce">هەڵبەزینەوە (Bounce Impact)</option>
+                                <option value="linear">یەکسان و هێڵی (Linear)</option>
+                            </select>
+                        </div>
+
+                        <div class="dev-row">
+                            <label>ماوەی ئەم چینە (Duration ms):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="cutecut-trans-dur" min="100" max="1000" step="20" value="280">
+                                <input type="number" id="cutecut-trans-dur-num" class="dev-input-num" min="100"
+                                    max="1000" value="280">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selected Layer Coordinates & Transforms -->
+                    <div class="dev-section-title" style="margin-top: 8px;">🎯 شوێن و قەبارەی چینی هەڵبژێردراو</div>
+
+                    <div class="dev-row">
+                        <label>وێنەی فڕەیم بۆ ئەم چینە (Layer Frame File):</label>
+                        <div class="dev-item-switcher">
+                            <button id="btn-dev-prev-frame" class="btn-cartoon btn-blue dev-btn-small">◀️ پێشوو</button>
+                            <select id="dev-attack-frame-select" class="dev-select"></select>
+                            <button id="btn-dev-next-frame" class="btn-cartoon btn-blue dev-btn-small">داهاتوو
+                                ▶️</button>
+                        </div>
+                        <!-- Clickable Visual Frame Thumbnails for Instant Switching -->
+                        <div id="cutecut-frame-chips"
+                            style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;"></div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>شوێنی ئاسۆیی (X):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-slider-atk-x">
+                            <input type="number" id="dev-input-atk-x" class="dev-input-num">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>شوێنی ستوونی (Y):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-slider-atk-y">
+                            <input type="number" id="dev-input-atk-y" class="dev-input-num">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>قەبارەی گشتی (Scale):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-slider-atk-scale">
+                            <input type="number" id="dev-input-atk-scale" class="dev-input-num">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>پانی / وەرگێڕان (Scale X / Flip):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-slider-atk-scaleX">
+                            <input type="number" id="dev-input-atk-scaleX" class="dev-input-num">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>درێژی (Scale Y):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-slider-atk-scaleY">
+                            <input type="number" id="dev-input-atk-scaleY" class="dev-input-num">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>سوڕانەوە (Rotation Angle):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-slider-atk-rotation">
+                            <input type="number" id="dev-input-atk-rotation" class="dev-input-num">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>تەبەقەی چین (Z-Index):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-slider-atk-zindex" min="50" max="90" step="1" value="60">
+                            <input type="number" id="dev-input-atk-zindex" class="dev-input-num" min="50" max="90"
+                                value="60">
+                        </div>
+                    </div>
+
+                    <!-- Per-Sound Voice Timing Section -->
+                    <div class="dev-section-title" style="margin-top: 14px;">🎵 کات و دەنگی هێرش (Sound & Voice Timings)
+                    </div>
+                    <div class="dev-row">
+                        <label for="dev-sound-select">دەنگی ئەم هێرشە:</label>
+                        <select id="dev-sound-select" class="dev-select"></select>
+                    </div>
+                    <div class="dev-row">
+                        <label>ماوەی قسەکردنی ئەم دەنگە (Sound Duration ms):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-slider-snd-dur" min="500" max="6000" step="50">
+                            <input type="number" id="dev-input-snd-dur" class="dev-input-num" min="500" max="6000">
+                        </div>
+                    </div>
+                    <div class="dev-row">
+                        <label>خێرایی جوڵەی دەم بۆ ئەم دەنگە (Talk Frame Speed ms):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-slider-snd-speed" min="30" max="250" step="5">
+                            <input type="number" id="dev-input-snd-speed" class="dev-input-num" min="30" max="250">
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <button id="btn-dev-test-sound-voice" class="btn-cartoon btn-green"
+                            style="width: 100%; font-size: 0.9rem;">
+                            🔊 تاقیکردنەوەی دەنگ و دەم
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Control Panel 3 (Dedicated Sound & Voice Studio) -->
+                <div id="dev-controls-sounds" class="dev-controls-col" style="display: none;">
+                    <div class="dev-section-title">🎙️ ستۆدیۆی دەنگ و قسەکان (Voices & Sounds Studio)</div>
+
+                    <!-- Sound Selection & Action Buttons -->
+                    <div class="dev-row">
+                        <label for="dev-voice-select">دەنگ یان قسەی دیاریکراو (Selected Voice):</label>
+                        <select id="dev-voice-select" class="dev-select"></select>
+                    </div>
+
+                    <div class="dev-actions-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 8px;">
+                        <button id="btn-dev-voice-add" class="btn-cartoon btn-green" style="font-size: 0.85rem;">
+                            ➕ زیادکردنی دەنگی نوێ
+                        </button>
+                        <button id="btn-dev-voice-delete" class="btn-cartoon btn-red" style="font-size: 0.85rem;">
+                            🗑️ سڕینەوەی ئەم دەنگە
+                        </button>
+                    </div>
+
+                    <!-- Add New Voice Inline Form -->
+                    <div id="dev-voice-add-form"
+                        style="display: none; background: #141021; border: 2px solid #2ecc71; border-radius: 14px; padding: 10px; margin-bottom: 10px;">
+                        <div style="font-size: 0.85rem; font-weight: 800; color: #2ecc71; margin-bottom: 6px;">➕
+                            زیادکردنی دەنگی نوێ بۆ کاتەلۆگ:</div>
+                        <div class="dev-row" style="margin-bottom: 6px;">
+                            <label style="font-size: 0.78rem;">ناوی ناسێنەر (ID e.g. voice_4, hit_sound):</label>
+                            <input type="text" id="dev-new-voice-id" class="dev-input-num"
+                                style="width: 100%; text-align: left; direction: ltr;" placeholder="voice_4">
+                        </div>
+                        <div class="dev-row" style="margin-bottom: 6px;">
+                            <label style="font-size: 0.78rem;">ناوی پیشاندان (Display Name):</label>
+                            <input type="text" id="dev-new-voice-name" class="dev-input-num" style="width: 100%;"
+                                placeholder="قسەی کوردی ٤">
+                        </div>
+                        <div class="dev-row" style="margin-bottom: 8px;">
+                            <label style="font-size: 0.78rem;">فایلی دەنگ (Audio Path e.g. sounds/voice4.mp3):</label>
+                            <input type="text" id="dev-new-voice-file" class="dev-input-num"
+                                style="width: 100%; text-align: left; direction: ltr;" placeholder="sounds/voice4.mp3">
+                        </div>
+                        <div class="dev-actions-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
+                            <button id="btn-dev-new-voice-save" class="btn-cartoon btn-green dev-btn-small">تۆمارکردن
+                                💾</button>
+                            <button id="btn-dev-new-voice-cancel"
+                                class="btn-cartoon btn-dark dev-btn-small">پەشیمانبوونەوە ✖</button>
+                        </div>
+                    </div>
+
+                    <!-- Voice Properties -->
+                    <div class="dev-section-title" style="margin-top: 10px;">⏱️ ڕێکخستنی کات و دووبارەبوونەوەی دەم</div>
+
+                    <div class="dev-row">
+                        <label>ناوی فایلی دەنگ (File Path):</label>
+                        <input type="text" id="dev-voice-input-file" class="dev-input-num"
+                            style="width: 100%; text-align: left; direction: ltr;">
+                    </div>
+
+                    <div class="dev-row">
+                        <label>ماوەی قسەکردنی ئەم دەنگە (Voice Duration ms):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-voice-slider-dur" min="200" max="8000" step="50" value="2000">
+                            <input type="number" id="dev-voice-input-dur" class="dev-input-num" min="200" max="8000"
+                                value="2000">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>خێرایی سووڕانی فڕەیمەکانی دەم (Talk Frame Repeat ms):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-voice-slider-speed" min="30" max="250" step="5" value="100">
+                            <input type="number" id="dev-voice-input-speed" class="dev-input-num" min="30" max="250"
+                                value="100">
+                        </div>
+                    </div>
+
+                    <!-- Live Test with Real-time Lip-Sync on stage -->
+                    <div style="margin-top: 12px; margin-bottom: 8px;">
+                        <button id="btn-dev-voice-test-live" class="btn-cartoon btn-green"
+                            style="width: 100%; font-size: 0.95rem;">
+                            🔊 تاقیکردنەوەی دەنگ لەگەڵ جوڵەی دەم (Test Voice + Live Lip Sync)
+                        </button>
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                        <button id="btn-dev-voice-export" class="btn-cartoon btn-blue"
+                            style="width: 100%; font-size: 0.9rem;">
+                            📋 کۆپیکردنی کۆدی دەنگەکان (Export Voice Timings)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Control Panel 4 (Firearms & Shooting Studio) -->
+                <div id="dev-controls-shooting" class="dev-controls-col" style="display: none;">
+                    <div class="dev-section-title">🔫⚔️ ستۆدیۆی چەکەکان و شمشێر (Weapons & Swords Studio)</div>
+
+                    <!-- Weapon Category Tabs (Shooting vs Swords vs Special) -->
+                    <div class="dev-weapons-category-tabs" style="display: flex; gap: 8px; margin-bottom: 12px;">
+                        <button type="button" id="btn-dev-cat-shooting" class="dev-mode-tab active"
+                            style="flex: 1; padding: 7px 4px; font-size: 0.84rem; text-align: center;">🔫 ئاگرین
+                            (Guns)</button>
+                        <button type="button" id="btn-dev-cat-swords" class="dev-mode-tab"
+                            style="flex: 1; padding: 7px 4px; font-size: 0.84rem; text-align: center;">⚔️ شمشێر
+                            (Swords)</button>
+                        <button type="button" id="btn-dev-cat-special" class="dev-mode-tab"
+                            style="flex: 1; padding: 7px 4px; font-size: 0.84rem; text-align: center;">✨ تایبەت
+                            (Special)</button>
+                    </div>
+
+                    <!-- Weapon Selection and Add Weapon -->
+                    <div class="dev-row">
+                        <label for="dev-shooting-weapon-select">هەڵبژاردنی چەک (Selected Weapon):</label>
+                        <select id="dev-shooting-weapon-select" class="dev-select"></select>
+                    </div>
+
+                    <div class="dev-actions-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 8px;">
+                        <button id="btn-dev-shooting-add-weapon" class="btn-cartoon btn-green"
+                            style="font-size: 0.85rem;">
+                            ➕ زیادکردنی چەکی نوێ
+                        </button>
+                        <button id="btn-dev-shooting-del-weapon" class="btn-cartoon btn-red"
+                            style="font-size: 0.85rem;">
+                            🗑️ سڕینەوەی ئەم چەکە
+                        </button>
+                    </div>
+
+                    <!-- Add New Weapon Inline Form -->
+                    <div id="dev-shooting-add-form"
+                        style="display: none; background: #141021; border: 2px solid #2ecc71; border-radius: 14px; padding: 10px; margin-bottom: 10px;">
+                        <div style="font-size: 0.85rem; font-weight: 800; color: #2ecc71; margin-bottom: 6px;">➕
+                            زیادکردنی چەکی نوێ بۆ کاتەلۆگ:</div>
+                        <div class="dev-row" style="margin-bottom: 6px;">
+                            <label style="font-size: 0.78rem;">ناوی ناسێنەر (ID e.g. awm, shotgun):</label>
+                            <input type="text" id="dev-new-gun-id" class="dev-input-num"
+                                style="width: 100%; text-align: left; direction: ltr;" placeholder="awm">
+                        </div>
+                        <div class="dev-row" style="margin-bottom: 6px;">
+                            <label style="font-size: 0.78rem;">ناوی پیشاندان (Display Name):</label>
+                            <input type="text" id="dev-new-gun-name" class="dev-input-num" style="width: 100%;"
+                                placeholder="قەناس (AWM)">
+                        </div>
+                        <div class="dev-row" style="margin-bottom: 6px;">
+                            <label style="font-size: 0.78rem;">فۆڵدەری کەرەستەکان (Folder Path):</label>
+                            <input type="text" id="dev-new-gun-folder" class="dev-input-num"
+                                style="width: 100%; text-align: left; direction: ltr;"
+                                placeholder="attaker/shooting/awm">
+                        </div>
+                        <div class="dev-actions-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
+                            <button id="btn-dev-new-gun-save" class="btn-cartoon btn-green dev-btn-small">تۆمارکردن
+                                💾</button>
+                            <button id="btn-dev-new-gun-cancel"
+                                class="btn-cartoon btn-dark dev-btn-small">پەشیمانبوونەوە ✖</button>
+                        </div>
+                    </div>
+
+                    <!-- Frame Selection with Clickable Thumbnails -->
+                    <div class="dev-section-title" style="margin-top: 8px;">🎞️ فڕەیم و کەرەستەی چەک (Frames & Bullet)
+                    </div>
+                    <div class="dev-row">
+                        <label for="dev-shooting-frame-select">فڕەیمی دیاریکراو (Selected Frame):</label>
+                        <select id="dev-shooting-frame-select" class="dev-select">
+                            <option value="frame1.png">فڕەیمی ١: ئامادە و ڕاوەستاو (frame1.png)</option>
+                            <option value="frame2.png">فڕەیمی ٢: تەقەکردن و پریشک (frame2.png)</option>
+                            <option value="frame3.png">فڕەیمی ٣: پەڕینەوە و خولانەوە (frame3.png)</option>
+                            <option value="bullet.png">فڕەیمی فیشەک (bullet.png)</option>
+                        </select>
+                        <div id="dev-shooting-frame-chips"
+                            style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;"></div>
+                    </div>
+
+                    <!-- Per-Frame Coordinates and Size Sliders (Requirement 4) -->
+                    <div class="dev-section-title" style="margin-top: 10px;">📐 شوێن و قەبارەی ئەم فڕەیمە (Selected
+                        Frame Offset & Size)</div>
+                    <div class="dev-stage-tip" style="margin-bottom: 8px;">
+                        🎯 لێرەدا دەتوانیت هەر فڕەیمێک (frame1, frame2, frame3, bullet) بە جیا ڕێکبخەیت چونکە قەبارەی
+                        وێنەکان جیاوازن!
+                    </div>
+
+                    <div class="dev-row">
+                        <label>شوێنی ئاسۆیی فڕەیم (Frame X Offset):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-shooting-slider-frame-x" min="-200" max="200" step="1"
+                                value="0">
+                            <input type="number" id="dev-shooting-input-frame-x" class="dev-input-num" min="-200"
+                                max="200" value="0">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>شوێنی ستوونی فڕەیم (Frame Y Offset):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-shooting-slider-frame-y" min="-200" max="200" step="1"
+                                value="0">
+                            <input type="number" id="dev-shooting-input-frame-y" class="dev-input-num" min="-200"
+                                max="200" value="0">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>قەبارەی ئەم فڕەیمە (Frame Scale):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-shooting-slider-frame-scale" min="0.1" max="2.0" step="0.02"
+                                value="0.55">
+                            <input type="number" id="dev-shooting-input-frame-scale" class="dev-input-num" min="0.1"
+                                max="2.0" step="0.02" value="0.55">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>پانی فڕەیم (Frame Scale X):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-shooting-slider-frame-scaleX" min="-2.5" max="2.5" step="0.05"
+                                value="1.0">
+                            <input type="number" id="dev-shooting-input-frame-scaleX" class="dev-input-num" min="-2.5"
+                                max="2.5" step="0.05" value="1.0">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>بەرزی فڕەیم (Frame Scale Y):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-shooting-slider-frame-scaleY" min="0.1" max="2.5" step="0.05"
+                                value="1.0">
+                            <input type="number" id="dev-shooting-input-frame-scaleY" class="dev-input-num" min="0.1"
+                                max="2.5" step="0.05" value="1.0">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>گۆشەی سووڕانی فڕەیم (Frame Rotation):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-shooting-slider-frame-rot" min="-180" max="180" step="1"
+                                value="0">
+                            <input type="number" id="dev-shooting-input-frame-rot" class="dev-input-num" min="-180"
+                                max="180" value="0">
+                        </div>
+                    </div>
+
+                    <!-- Overall Coordinates and Muzzle Offset Sliders -->
+                    <div class="dev-section-title" style="margin-top: 10px;">📐 شوێن، قەبارەی گشتی و لولە (Global
+                        Coordinates & Muzzle)</div>
+
+                    <div class="dev-row">
+                        <label>قەبارەی گشتی چەک (Overall Scale):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-shooting-slider-scale" min="0.2" max="1.5" step="0.02"
+                                value="0.55">
+                            <input type="number" id="dev-shooting-input-scale" class="dev-input-num" min="0.2" max="1.5"
+                                step="0.02" value="0.55">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>پانی / هەڵگەڕاندنەوە (Scale X):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-shooting-slider-scaleX" min="-2.0" max="2.0" step="0.05"
+                                value="1.0">
+                            <input type="number" id="dev-shooting-input-scaleX" class="dev-input-num" min="-2.0"
+                                max="2.0" step="0.05" value="1.0">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>درێژی ستوونی (Scale Y):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-shooting-slider-scaleY" min="0.2" max="2.0" step="0.05"
+                                value="1.0">
+                            <input type="number" id="dev-shooting-input-scaleY" class="dev-input-num" min="0.2"
+                                max="2.0" step="0.05" value="1.0">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>گۆشەی لاربوونەوەی بنەڕەت (Rotation Offset):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-shooting-slider-rot" min="-180" max="180" step="1" value="0">
+                            <input type="number" id="dev-shooting-input-rot" class="dev-input-num" min="-180" max="180"
+                                value="0">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>هێزی لێدان (Damage Power):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-shooting-slider-damage" min="5" max="100" step="1" value="35">
+                            <input type="number" id="dev-shooting-input-damage" class="dev-input-num" min="5" max="100"
+                                value="35">
+                        </div>
+                    </div>
+
+                    <!-- GUN SPECIFIC CONTROLS (Muzzle, Fire Modes, Bullet) -->
+                    <div id="dev-group-shooting-specific">
+                        <div class="dev-row">
+                            <label>دووری لولەی چەک (Muzzle X Offset):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="dev-shooting-slider-muzzleX" min="40" max="260" step="2"
+                                    value="140">
+                                <input type="number" id="dev-shooting-input-muzzleX" class="dev-input-num" min="40"
+                                    max="260" value="140">
+                            </div>
+                        </div>
+
+                        <div class="dev-row">
+                            <label>بەرزی لولەی چەک (Muzzle Y Offset):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="dev-shooting-slider-muzzleY" min="-60" max="60" step="1"
+                                    value="-8">
+                                <input type="number" id="dev-shooting-input-muzzleY" class="dev-input-num" min="-60"
+                                    max="60" value="-8">
+                            </div>
+                        </div>
+
+                        <!-- Firing Modes & Speed Dynamics (Requirement 3) -->
+                        <div class="dev-section-title" style="margin-top: 10px;">🔥 شێوازی تەقەکردن و خێرایی (Fire Modes
+                            & Speeds)</div>
+
+                        <!-- Single Mode -->
+                        <div class="dev-row"
+                            style="display: flex; align-items: center; justify-content: space-between;">
+                            <label for="dev-shooting-mode-single" style="margin: 0; cursor: pointer;">🎯 تک‌تیر چالاکە
+                                (Single Shot Enabled):</label>
+                            <input type="checkbox" id="dev-shooting-mode-single"
+                                style="width: 22px; height: 22px; accent-color: #2ecc71; cursor: pointer;" checked>
+                        </div>
+
+                        <!-- Burst Mode -->
+                        <div class="dev-row"
+                            style="display: flex; align-items: center; justify-content: space-between;">
+                            <label for="dev-shooting-mode-burst" style="margin: 0; cursor: pointer;">💥 سێ‌تیر / چەندتیر
+                                چالاکە (Burst Fire Enabled):</label>
+                            <input type="checkbox" id="dev-shooting-mode-burst"
+                                style="width: 22px; height: 22px; accent-color: #f39c12; cursor: pointer;" checked>
+                        </div>
+
+                        <div class="dev-row">
+                            <label>ژمارەی فیشەکی Burst (Burst Count):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="dev-shooting-slider-burst-count" min="2" max="6" step="1"
+                                    value="3">
+                                <input type="number" id="dev-shooting-input-burst-count" class="dev-input-num" min="2"
+                                    max="6" value="3">
+                            </div>
+                        </div>
+
+                        <div class="dev-row">
+                            <label>خێرایی نێوان فیشەکەکانی Burst (Burst Interval ms):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="dev-shooting-slider-burst-interval" min="40" max="250" step="5"
+                                    value="80">
+                                <input type="number" id="dev-shooting-input-burst-interval" class="dev-input-num"
+                                    min="40" max="250" value="80">
+                            </div>
+                        </div>
+
+                        <!-- Rapid Auto Mode -->
+                        <div class="dev-row"
+                            style="display: flex; align-items: center; justify-content: space-between;">
+                            <label for="dev-shooting-mode-rapid" style="margin: 0; cursor: pointer;">⚡ دەستڕێژی بەردەوام
+                                چالاکە (Rapid Fire Enabled):</label>
+                            <input type="checkbox" id="dev-shooting-mode-rapid"
+                                style="width: 22px; height: 22px; accent-color: #e74c3c; cursor: pointer;" checked>
+                        </div>
+
+                        <div class="dev-row">
+                            <label>خێرایی دەستڕێژی بەردەوام (Rapid Interval ms):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="dev-shooting-slider-rapid-interval" min="50" max="300" step="5"
+                                    value="110">
+                                <input type="number" id="dev-shooting-input-rapid-interval" class="dev-input-num"
+                                    min="50" max="300" value="110">
+                            </div>
+                        </div>
+
+                        <!-- Firing & Bullet Dynamics -->
+                        <div class="dev-section-title" style="margin-top: 10px;">⚡ خێرایی و فڕینی فیشەک (Bullet
+                            Dynamics)</div>
+
+                        <div class="dev-row">
+                            <label>خێرایی گۆڕینی فڕەیمەکان (Frame Speed ms):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="dev-shooting-slider-fspeed" min="30" max="200" step="5"
+                                    value="65">
+                                <input type="number" id="dev-shooting-input-fspeed" class="dev-input-num" min="30"
+                                    max="200" value="65">
+                            </div>
+                        </div>
+
+                        <div class="dev-row">
+                            <label>خێرایی فڕینی فیشەک (Bullet Speed px/s):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="dev-shooting-slider-bspeed" min="800" max="4000" step="100"
+                                    value="2200">
+                                <input type="number" id="dev-shooting-input-bspeed" class="dev-input-num" min="800"
+                                    max="4000" value="2200">
+                            </div>
+                        </div>
+
+                        <div class="dev-row">
+                            <label>قەبارەی فیشەک (Bullet Scale):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="dev-shooting-slider-bscale" min="0.2" max="1.2" step="0.05"
+                                    value="0.45">
+                                <input type="number" id="dev-shooting-input-bscale" class="dev-input-num" min="0.2"
+                                    max="1.2" step="0.05" value="0.45">
+                            </div>
+                        </div>
+
+                        <div class="dev-row">
+                            <label>تەقینەوە و ڕەتکردنەوەی دواوە (Recoil Kick px):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="dev-shooting-slider-recoil" min="0" max="40" step="1"
+                                    value="15">
+                                <input type="number" id="dev-shooting-input-recoil" class="dev-input-num" min="0"
+                                    max="40" value="15">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SWORDS SPECIFIC CONTROLS -->
+                    <div id="dev-group-swords-specific" style="display: none;">
+                        <div class="dev-section-title" style="margin-top: 10px;">⚔️ فیزیا و خێرایی لێدانی شمشێر (Sword
+                            Slash Physics)</div>
+                        <div class="dev-row">
+                            <label>خێرایی و کاتی لێدان (Slash Duration ms):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="dev-swords-slider-duration" min="80" max="500" step="10"
+                                    value="200">
+                                <input type="number" id="dev-swords-input-duration" class="dev-input-num" min="80"
+                                    max="500" value="200">
+                            </div>
+                        </div>
+                        <div class="dev-row">
+                            <label>کەمترین دووری سوایپ بۆ لێدان (Min Swipe Dist px):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="dev-swords-slider-min-swipe" min="15" max="150" step="5"
+                                    value="35">
+                                <input type="number" id="dev-swords-input-min-swipe" class="dev-input-num" min="15"
+                                    max="150" value="35">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SPECIAL SPECIFIC CONTROLS -->
+                    <div id="dev-group-special-specific" style="display: none;">
+                        <div class="dev-section-title" style="margin-top: 10px;">✨ تایبەتمەندی چەکی تایبەت (Special
+                            Weapon Properties)</div>
+                        <div class="dev-row" id="dev-special-row-orbit">
+                            <label>خولانەوە بە دەوری پەنجە (Orbit Radius px):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="dev-special-slider-orbit" min="20" max="120" step="2"
+                                    value="52">
+                                <input type="number" id="dev-special-input-orbit" class="dev-input-num" min="20"
+                                    max="120" value="52">
+                            </div>
+                        </div>
+                        <div class="dev-row" id="dev-special-row-speed">
+                            <label>خێرایی فڕین یان سووڕانەوە (Speed):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="dev-special-slider-speed" min="400" max="3000" step="50"
+                                    value="1400">
+                                <input type="number" id="dev-special-input-speed" class="dev-input-num" min="400"
+                                    max="3000" value="1400">
+                            </div>
+                        </div>
+                        <div class="dev-row" id="dev-special-row-stick">
+                            <label>ماوەی چەقین لەسەر لەش (Stick Duration ms):</label>
+                            <div class="dev-slider-group">
+                                <input type="range" id="dev-special-slider-stick" min="1000" max="10000" step="200"
+                                    value="4500">
+                                <input type="number" id="dev-special-input-stick" class="dev-input-num" min="1000"
+                                    max="10000" value="4500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Blood FX & Zone Calibration (Requirement 6) -->
+                    <div class="dev-section-title" style="margin-top: 10px;">🩸 ڕێکخستنی خوێن و زۆنی لەش (Blood FX &
+                        Body Zone)</div>
+
+                    <div class="dev-row">
+                        <label>ناوەندی بەرزی خوێن لەسەر لەش (Blood Center Y):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-shooting-slider-blood-centery" min="140" max="340" step="2"
+                                value="240">
+                            <input type="number" id="dev-shooting-input-blood-centery" class="dev-input-num" min="140"
+                                max="340" value="240">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>پانتایی بڵاوبوونەوەی ستوونی (Blood Spread Y):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-shooting-slider-blood-spready" min="40" max="220" step="2"
+                                value="150">
+                            <input type="number" id="dev-shooting-input-blood-spready" class="dev-input-num" min="40"
+                                max="220" value="150">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>پانتایی بڵاوبوونەوەی ئاسۆیی (Blood Spread X):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-shooting-slider-blood-spreadx" min="30" max="180" step="2"
+                                value="110">
+                            <input type="number" id="dev-shooting-input-blood-spreadx" class="dev-input-num" min="30"
+                                max="180" value="110">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>قەبارەی خوێن (Blood Scale):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-shooting-slider-bloodscale" min="0.15" max="1.0" step="0.03"
+                                value="0.40">
+                            <input type="number" id="dev-shooting-input-bloodscale" class="dev-input-num" min="0.15"
+                                max="1.0" step="0.03" value="0.40">
+                        </div>
+                    </div>
+
+                    <div class="dev-row">
+                        <label>ماوەی مانەوەی خوێن (Blood Duration ms):</label>
+                        <div class="dev-slider-group">
+                            <input type="range" id="dev-shooting-slider-blooddur" min="500" max="6000" step="100"
+                                value="2400">
+                            <input type="number" id="dev-shooting-input-blooddur" class="dev-input-num" min="500"
+                                max="6000" value="2400">
+                        </div>
+                    </div>
+
+                    <!-- Sound Section -->
+                    <div class="dev-section-title" style="margin-top: 10px;">🎵 فایلی دەنگی تەقەکردن (Gunshot Audio)
+                    </div>
+                    <div class="dev-row">
+                        <label>ناوی فایلی دەنگ (Audio Path):</label>
+                        <input type="text" id="dev-shooting-input-sound" class="dev-input-num"
+                            style="width: 100%; text-align: left; direction: ltr;">
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <button id="btn-dev-shooting-test-sound" class="btn-cartoon btn-green"
+                            style="width: 100%; font-size: 0.9rem;">
+                            🔊 تاقیکردنەوەی دەنگی چەک (Play Gun Audio)
+                        </button>
+                    </div>
+
+                    <!-- Live Playback & Tests -->
+                    <div class="dev-section-title" style="margin-top: 10px;">🎯 تاقیکردنەوەی ڕاستەوخۆ لەسەر ستیج</div>
+                    <div id="dev-test-row-shooting" class="dev-actions-grid"
+                        style="grid-template-columns: 1fr 1fr; margin-bottom: 8px;">
+                        <button id="btn-dev-shooting-test-left" class="btn-cartoon btn-red" style="font-size: 0.85rem;">
+                            🔫 تەقەکردن لە چەپ
+                        </button>
+                        <button id="btn-dev-shooting-test-right" class="btn-cartoon btn-purple"
+                            style="font-size: 0.85rem;">
+                            🔫 تەقەکردن لە ڕاست
+                        </button>
+                    </div>
+                    <div id="dev-test-row-swords" style="display: none; margin-bottom: 8px;">
+                        <button id="btn-dev-sword-test-slash" class="btn-cartoon btn-gold"
+                            style="width: 100%; font-size: 0.9rem;">
+                            ⚔️ تاقیکردنەوەی لێدانی شمشێر (Test Slash)
+                        </button>
+                    </div>
+                    <div id="dev-test-row-special" style="display: none; margin-bottom: 8px;">
+                        <button id="btn-dev-special-test-action" class="btn-cartoon btn-purple"
+                            style="width: 100%; font-size: 0.9rem;">
+                            ✨ تاقیکردنەوەی هێرشی تایبەت (Test Special Action)
+                        </button>
+                    </div>
+
+                    <div class="dev-actions-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 8px;">
+                        <button id="btn-dev-shooting-test-blood" class="btn-cartoon btn-gold"
+                            style="font-size: 0.85rem;">
+                            🩸 تاقیکردنەوەی خوێن
+                        </button>
+                        <button id="btn-dev-shooting-export" class="btn-cartoon btn-blue" style="font-size: 0.85rem;">
+                            📋 کۆپیکردنی کۆد
+                        </button>
+                    </div>
+
+                    <div class="dev-stage-tip" style="margin-top: 4px;">
+                        💡 لەم بەشەدا لە سەر هەر شوێنێکی ستیج کلیک بکەیت، چەکەکە ئاراستەی مامە ڤانە دەکات و هێرش دەکات!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Modal Dialog with Categorized Tabs -->
+            <div id="dev-export-modal" class="dev-modal">
+                <div class="dev-modal-content">
+                    <div class="dev-modal-header">
+                        <h3 class="dev-modal-title">📋 دەرهێنانی کۆد (Coordinates Export)</h3>
+                        <button id="btn-close-export-modal" class="btn-cartoon btn-red"
+                            style="padding: 4px 10px; font-size: 0.85rem;">✖</button>
+                    </div>
+
+                    <!-- Export Modal Sub-Tabs -->
+                    <div class="dev-export-tabs">
+                        <button id="tab-export-item" class="dev-export-tab active">👤 ئەم کەرەستەیە</button>
+                        <button id="tab-export-cat" class="dev-export-tab">📂 ئەم بەشە</button>
+                        <button id="tab-export-attack" class="dev-export-tab">💥 ئەم هێرشە</button>
+                        <button id="tab-export-shooting" class="dev-export-tab">🔫 چەکەکان</button>
+                        <button id="tab-export-swords" class="dev-export-tab">⚔️ شمشێرەکان</button>
+                        <button id="tab-export-special" class="dev-export-tab">✨ تایبەت</button>
+                        <button id="tab-export-frame" class="dev-export-tab">🎯 ئەم فڕەیمە</button>
+                        <button id="tab-export-mouth" class="dev-export-tab">👄 دەمی قسەکەر</button>
+                        <button id="tab-export-sound" class="dev-export-tab">🎵 کاتی دەنگەکان</button>
+                        <button id="tab-export-all" class="dev-export-tab">🌐 تەواوی کۆدەکان</button>
+                    </div>
+
+                    <p id="dev-export-desc" class="dev-modal-desc">
+                        ئەم دێڕە کۆپی بکە و لە ناو شوێنی دیاریکراوی <code>js/coordinates.js</code> دایبنێ:
+                    </p>
+                    <textarea id="dev-export-textarea" class="dev-modal-textarea" readonly></textarea>
+                    <div class="dev-modal-footer">
+                        <button id="btn-copy-code" class="btn-cartoon btn-green">کۆپیکردنی کۆد (Copy Code)</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==============================================
+             SCREEN 5: GAMEPLAY SCREEN (REORGANIZED HUD)
+             ============================================== -->
+        <section id="screen-game" class="game-screen">
+            <!-- Office Room Stage -->
+            <div id="game-stage" class="game-stage">
+                <!-- Boss Physic Body Container -->
+                <div id="game-boss-container" class="game-boss-container"></div>
+
+                <!-- Speech Bubble -->
+                <div id="game-speech-bubble" class="game-speech-bubble">
+                    ئای سەرم! وامەکە!
+                </div>
+
+                <!-- Attacker FX Frame Container -->
+                <div id="game-attacker-fx" class="game-attacker-fx"></div>
+
+                <!-- ============================================================
+                     LEGENDARY SET EFFECT OVERLAYS
+                     All hidden by default; activated by LegendaryEffectsEngine
+                     ============================================================ -->
+                <!-- Dark overlay (God of War, Tiger Jackson) -->
+                <div id="legendary-effect-overlay" class="legendary-dark-overlay" style="display:none;"></div>
+
+                <!-- Parti: logo at top -->
+                <div id="legendary-parti-logo" class="legendary-parti-logo" style="display:none;"></div>
+
+                <!-- Tiger Jackson: disco lasers from ceiling -->
+                <div id="legendary-disco-lasers" class="legendary-disco-lasers" style="display:none;"></div>
+
+                <!-- Harry Potter: golden snitch -->
+                <div id="legendary-golden-snitch" class="legendary-golden-snitch" style="display:none;"></div>
+
+                <!-- Shrek: donkey from sides -->
+                <div id="legendary-shrek-donkey" class="legendary-shrek-donkey" style="display:none;"></div>
+
+                <!-- Terminator: time-displacement ring, electric damage and repair -->
+                <div id="legendary-terminator-time" class="legendary-terminator-time" style="display:none;"></div>
+                <div id="legendary-terminator-electric" class="legendary-terminator-electric" style="display:none;"></div>
+                <div id="legendary-terminator-bullets" class="legendary-terminator-bullets" style="display:none;"></div>
+                <button id="legendary-terminator-repair" class="legendary-terminator-repair" type="button" title="چاککردنەوەی تۆرمیناتۆر" style="display:none;">
+                    <img src="assets/sets/terminator/repair.png" alt="repair" draggable="false">
+                </button>
+            </div>
+
+            <!-- Top Header: Coins, Diamonds & Combo -->
+            <div class="game-hud-top-center">
+                <div class="game-stats-box">
+                    <div class="stat-pill coins-pill">
+                        <span>💰</span>
+                        <span id="game-coins-count">0</span>
+                    </div>
+                    <div class="stat-pill diamonds-pill">
+                        <span>💎</span>
+                        <span id="game-diamonds-count">0</span>
+                    </div>
+                    <div id="game-combo-count" class="stat-pill combo-pill" style="min-width: 80px; display: none;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Left Sidebar: Quick Actions -->
+            <div class="game-sidebar-left">
+                <button id="btn-game-menu" class="btn-cartoon btn-purple btn-sidebar-icon" title="مێنیوی سەرەکی">
+                    🏠
+                </button>
+                <button id="btn-game-customizer" class="btn-cartoon btn-blue btn-sidebar-icon"
+                    title="ڕێکخستنی کەسایەتی">
+                    🎨
+                </button>
+                <button id="btn-game-settings" class="btn-cartoon btn-purple btn-sidebar-icon" title="ڕێکخستنەکان">
+                    ⚙️
+                </button>
+                <button id="btn-game-fullscreen" class="btn-cartoon btn-blue btn-sidebar-icon"
+                    title="کردنەوەی شاشەی تەواو" aria-label="کردنەوەی شاشەی تەواو">
+                    <img class="fullscreen-icon" src="assets/icons/fullscreen.svg" alt="" aria-hidden="true" draggable="false">
+                </button>
+                <button id="btn-game-dev" class="btn-cartoon btn-green btn-sidebar-icon btn-open-dev-editor"
+                    title="ستۆدیۆی پەرەپێدەر"
+                    onclick="if(window.gameApp) { if(window.gameEngine) window.gameEngine.stop(); window.gameApp.showScreen('dev_editor'); }">
+                    🛠️
+                </button>
+            </div>
+
+            <!-- Floating Selected Weapon Icon (TOP-RIGHT) - click to open attack modal -->
+            <div id="game-weapon-picker-wrap">
+                <button id="game-active-weapon-btn" class="game-active-weapon-btn"
+                    title="هەڵبژاردنی چەک (Choose Attack)">
+                    <img id="game-active-weapon-icon" src="assets/icons/hand.png" alt="دەست">
+                </button>
+            </div>
+
+            <div class="radio-widget" data-radio-widget>
+                <div class="radio-antenna"></div>
+                <div class="radio-display">
+                    <span class="radio-display-dot"></span>
+                    <span data-radio-title>مامە ڤانە FM</span>
+                </div>
+                <div class="radio-speakers">
+                    <span></span><span></span>
+                </div>
+                <div class="radio-controls">
+                    <button class="radio-control-btn" data-radio-action="previous" title="گۆرانی پێشوو"><span class="emoji-icon">⏮</span></button>
+                    <button class="radio-control-btn radio-play-btn" data-radio-action="toggle" title="دەستپێکردن و ڕاگرتن"><span class="emoji-icon">▶</span></button>
+                    <button class="radio-control-btn" data-radio-action="next" title="گۆرانی داهاتوو"><span class="emoji-icon">⏭</span></button>
+                </div>
+                <label class="radio-volume" title="دەنگی ڕادیۆ">
+                    <span class="emoji-icon">🔊</span>
+                    <input type="range" min="0" max="1" step="0.01" value="0.25" data-radio-volume aria-label="دەنگی ڕادیۆ">
+                </label>
+            </div>
+
+            <!-- Attack Picker Modal (centered, full overlay) -->
+            <div id="game-weapon-modal" class="game-weapon-modal" style="display:none;">
+                <div class="game-weapon-modal-overlay" id="game-weapon-modal-overlay"></div>
+                <div class="game-weapon-modal-content">
+                    <div class="game-weapon-modal-header">
+                        <h3 class="game-weapon-modal-title">⚔️ هەڵبژاردنی هێرش (Choose Attack)</h3>
+                        <button class="game-weapon-modal-close" id="btn-close-attack-modal">✖</button>
+                    </div>
+                    <div id="game-weapons-bar" class="game-weapons-modal-body"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==============================================
+             MODAL: SHOP & BACKGROUNDS
+             ============================================== -->
+        <div id="modal-shop" class="game-modal">
+            <div class="game-modal-content shop-modal-content">
+                <div class="game-modal-header">
+                    <h3 class="game-modal-title">🏪 فرۆشگای مامە ڤانە (Shop & Themes)</h3>
+                    <button id="btn-close-shop" class="btn-cartoon btn-red btn-modal-close">✖</button>
+                </div>
+
+                <div class="shop-currency-header">
+                    <div class="currency-badge coins-badge">💰 سکە: <span class="coins-counter-val">0</span></div>
+                    <div class="currency-badge diamonds-badge">💎 ئەڵماس: <span class="diamonds-counter-val">0</span>
+                    </div>
+                </div>
+
+                <div class="shop-section-title">🌄 هەڵبژاردنی پاشبنەما (Backgrounds)</div>
+                <div id="shop-backgrounds-grid" class="shop-items-grid"></div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             MODAL: SETTINGS
+             ============================================== -->
+        <div id="modal-settings" class="game-modal">
+            <div class="game-modal-content settings-modal-content">
+                <div class="game-modal-header">
+                    <h3 class="game-modal-title">⚙️ ڕێکخستنەکانی یاری (Settings)</h3>
+                    <button id="btn-close-settings" class="btn-cartoon btn-red btn-modal-close">✖</button>
+                </div>
+
+                <div class="settings-rows-list">
+                    <div class="settings-row">
+                        <div class="settings-label-box">
+                            <span class="settings-icon">🔊</span>
+                            <div>
+                                <div class="settings-name">دەنگی سەرەکی یاری (Master Sound)</div>
+                                <div class="settings-desc">دەنگی لێدان، زللـە، و چەکەکان</div>
+                            </div>
+                        </div>
+                        <input type="checkbox" id="settings-toggle-sound" class="settings-toggle-switch" checked>
+                    </div>
+
+                    <div class="settings-row">
+                        <div class="settings-label-box">
+                            <span class="settings-icon">🗣️</span>
+                            <div>
+                                <div class="settings-name">قسەی کوردی سەربەخۆ (Ambient Voice)</div>
+                                <div class="settings-desc">قسەکردنی هەڕەمەکی مامە ڤانە هەموو ٢ بۆ ٣ خولەک جارێک</div>
+                            </div>
+                        </div>
+                        <input type="checkbox" id="settings-toggle-ambient" class="settings-toggle-switch" checked>
+                    </div>
+
+                    <div class="settings-row">
+                        <div class="settings-label-box">
+                            <span class="settings-icon">📻</span>
+                            <div>
+                                <div class="settings-name">ڕادیۆی یاری (Game Radio)</div>
+                                <div class="settings-desc">پیشاندان و لێدانی ڕادیۆ لە مێنیو و ناو یاری</div>
+                            </div>
+                        </div>
+                        <input type="checkbox" id="settings-toggle-radio" class="settings-toggle-switch" checked>
+                    </div>
+
+                    <!-- Age Mode row -->
+                    <div class="settings-row settings-row-age">
+                        <div class="settings-label-box">
+                            <span class="settings-icon">🔞</span>
+                            <div>
+                                <div class="settings-name">دەنگی مەترسیدار (+18 Mode)</div>
+                                <div class="settings-desc settings-desc-warn">ئەگەر چالاک بکەیت دەنگی تەمەن مەترسیدار لە
+                                    کاتی لێدان دەخرێتەوە</div>
+                            </div>
+                        </div>
+                        <input type="checkbox" id="settings-toggle-adult"
+                            class="settings-toggle-switch settings-toggle-adult">
+                    </div>
+
+                    <!-- Head Gear Fall Off Toggle -->
+                    <div class="settings-row">
+                        <div class="settings-label-box">
+                            <span class="settings-icon">🧢</span>
+                            <div>
+                                <div class="settings-name">کەوتنی کەلوپەلی سەر (Head Gear Fall-off)</div>
+                                <div class="settings-desc">کەوتنی کڵاو بە فیزیای ڕاستەقینە دوای ١٠ لێدان لە کاتی یاری
+                                </div>
+                            </div>
+                        </div>
+                        <input type="checkbox" id="settings-toggle-gear-fall" class="settings-toggle-switch" checked>
+                    </div>
+
+                    <div class="settings-row">
+                        <div class="settings-label-box">
+                            <span class="settings-icon">🎚️</span>
+                            <div>
+                                <div class="settings-name">ئاستی دەنگ (SFX Volume)</div>
+                            </div>
+                        </div>
+                        <input type="range" id="settings-slider-volume" min="0" max="1" step="0.05" value="1"
+                            style="width: 140px; accent-color: #ffa502;">
+                    </div>
+
+                    <div class="settings-row"
+                        style="border-top: 2px solid #362952; padding-top: 15px; margin-top: 10px;">
+                        <button id="btn-settings-reset-data" class="btn-cartoon btn-red"
+                            style="width: 100%; font-size: 0.95rem;">
+                            🗑️ سڕینەوە و ڕیسێتکردنی داتاکان
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==============================================
+             MODAL: ABOUT
+             ============================================== -->
+        <div id="modal-about" class="game-modal">
+            <div class="game-modal-content about-modal-content">
+                <div class="game-modal-header">
+                    <h3 class="game-modal-title">ℹ️ دەربارەی یاری مامە ڤانە (About)</h3>
+                    <button id="btn-close-about" class="btn-cartoon btn-red btn-modal-close">✖</button>
+                </div>
+
+                <div class="about-card-body">
+                    <div class="about-badge-icon">👑</div>
+                    <h2 class="about-dev-title">گەشەپێدراوە لەلایەن دیدار</h2>
+                    <p class="about-dev-eng">Developed By Didar</p>
+
+                    <div class="about-info-text">
+                        یاری <strong>مامە ڤانە (Mama Vana)</strong> - وەشانی فەرمی کوردی سۆرانی بە ئیلهام وەرگرتن لە
+                        یارییە جیهانییەکانی Kick The Boss.
+                        دەتوانیت کەسایەتییەکەت بە دڵی خۆت بگۆڕیت و بە جۆرەها چەک و زللـەی کوردی یاری بکەیت!
+                    </div>
+
+                    <div class="about-version-tag">وەشانی ڤێرژن: 2.0.0 Pro</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==============================================
+         MODAL: AGE MODE SELECTOR (First Launch)
+         ============================================== -->
+    <div id="modal-age-prompt" class="age-prompt-overlay" role="dialog" aria-modal="true"
+        aria-labelledby="age-prompt-title">
+        <div class="age-prompt-box">
+
+            <!-- Warning icon + title -->
+            <div class="age-prompt-icon">🔞</div>
+            <h2 id="age-prompt-title" class="age-prompt-title">کام دەنگ دەتەوێ؟</h2>
+            <p class="age-prompt-subtitle">یاری مامە ڤانە دوو جۆر دەنگی کوردی هەیە کە لە کاتی لێدان دەخرێنەوە:</p>
+
+            <!-- Two big choice cards -->
+            <div class="age-prompt-cards">
+
+                <!-- ALL AGES card -->
+                <button id="btn-age-all" class="age-card age-card-safe" aria-label="هەموو تەمەنێک">
+                    <div class="age-card-icon">😊</div>
+                    <div class="age-card-label">هەموو تەمەنێک</div>
+                    <div class="age-card-badge age-badge-safe">All Ages</div>
+                    <div class="age-card-desc">دەنگی سادە و خۆشەویستی — گونجاوی هەموو تەمەنێک</div>
+                </button>
+
+                <!-- +18 card -->
+                <button id="btn-age-adult" class="age-card age-card-adult" aria-label="تەنها بۆ مەترسیدار">
+                    <div class="age-card-icon">🔥</div>
+                    <div class="age-card-label">مەترسیدار (+18)</div>
+                    <div class="age-card-badge age-badge-adult">+18</div>
+                    <div class="age-card-desc">دەنگی کوردی تیژ و قورس — تەنها بۆ مەترسیدار</div>
+                    <div class="age-card-warn">⚠️ ناگونجێت بۆ منداڵان</div>
+                </button>
+
+            </div>
+
+            <!-- Info note at bottom -->
+            <p class="age-prompt-note">📌 دەتوانیت ئەم هەڵبژاردنە لە ناو <strong>ڕێکخستنەکان</strong> هەر کاتێک بگۆڕیت
+            </p>
+
+        </div>
+    </div>
+
+    <!-- Scripts in strict dependency order -->
+    <script src="js/coordinates.js"></script>
+    <script src="js/assets.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/physics.js"></script>
+    <script src="js/character.js"></script>
+    <script src="js/customizer.js"></script>
+    <script src="js/dev_editor.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/legendary_effects.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

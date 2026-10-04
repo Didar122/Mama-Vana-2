@@ -1,0 +1,1394 @@
+/* ===================================================
+   Mama Vana - Character Customizer Screen
+   =================================================== */
+
+#screen-customizer {
+    flex-direction: column;
+    background: radial-gradient(circle at center, #292042 0%, #120e20 100%);
+    padding: 15px;
+    height: 100%;
+}
+
+.customizer-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+    z-index: 20;
+}
+
+.customizer-title {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #ffa502;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.customizer-top-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.customizer-currency-pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(14, 11, 24, 0.85);
+    border: 2px solid #433863;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.customizer-currency-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #fff;
+}
+
+.customizer-layout {
+    display: flex;
+    flex: 1;
+    gap: 15px;
+    height: calc(100% - 60px);
+    overflow: hidden;
+}
+
+/* Left/Preview column */
+.customizer-preview-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(20, 16, 32, 0.6);
+    border: 3px solid #3d3460;
+    border-radius: 24px;
+    position: relative;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.customizer-preview-col > .customizer-preview-stage {
+    position: relative;
+    z-index: 2;
+}
+
+/* Floating Randomize Button on Top-Right of Preview */
+.btn-randomize-preview {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 35;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+#btn-randomize-char {
+    position: absolute !important;
+    top: 14px !important;
+    right: 14px !important;
+    left: auto !important;
+    bottom: auto !important;
+    max-width: 180px;
+    padding: 6px 10px;
+    font-size: 0.78rem;
+    gap: 4px;
+}
+
+.btn-randomize-preview:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 8px 24px rgba(52, 152, 219, 0.5);
+}
+
+.btn-randomize-preview:active {
+    transform: translateY(1px);
+}
+
+.customizer-preview-stage {
+    position: relative;
+    width: 320px;
+    height: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Pedestal removed — no yellow glow under character */
+.customizer-preview-pedestal {
+    display: none;
+}
+
+/* === Preview Buy Bar (bottom-left of preview column) === */
+.customizer-preview-buy-bar {
+    position: absolute;
+    bottom: 14px;
+    left: 14px;
+    z-index: 35;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    animation: fadeInUp 0.25s ease;
+}
+
+#customizer-preview-buy-bar {
+    position: absolute !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: 14px !important;
+    left: 14px !important;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.preview-price-display {
+    display: flex;
+    gap: 8px;
+    background: rgba(10, 7, 20, 0.9);
+    border: 2px solid #3d3460;
+    border-radius: 14px;
+    padding: 5px 12px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    direction: rtl;
+}
+
+.preview-price-coin  { color: #f1c40f; }
+.preview-price-gem   { color: #54a0ff; }
+.preview-price-free  { color: #2ed573; }
+
+.preview-buy-btn {
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.preview-buy-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 24px rgba(255,165,2,0.55);
+}
+
+.preview-buy-btn:active {
+    transform: translateY(1px);
+}
+
+.customizer-actions-bar {
+    display: none;
+}
+
+/* Right/Drawer column */
+.customizer-drawer-col {
+    flex: 1.3;
+    display: flex;
+    flex-direction: column;
+    background: rgba(26, 21, 41, 0.85);
+    border: 3px solid #3d3460;
+    border-radius: 24px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+/* Category Tabs */
+.customizer-categories {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+    gap: 8px;
+    background: rgba(14, 11, 24, 0.9);
+    border-bottom: 2px solid #3d3460;
+    scrollbar-width: thin;
+    scrollbar-color: #ffa502 #1a1529;
+}
+
+.customizer-cat-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #251e38;
+    border: 2px solid #433863;
+    border-radius: 14px;
+    color: #a4b0be;
+    font-family: var(--font-kurdish);
+    font-weight: 700;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.customizer-cat-tab:hover {
+    background: #342b4d;
+    color: #fff;
+}
+
+.customizer-cat-tab.active {
+    background: linear-gradient(180deg, #ffa502 0%, #ff7f00 100%);
+    color: #fff;
+    border-color: #fff;
+    box-shadow: 0 4px 10px rgba(255, 165, 2, 0.4);
+    text-shadow: 1px 1px 0 #000;
+}
+
+.cat-icon {
+    font-size: 1.2rem;
+}
+
+/* Items Grid & Sets View */
+.customizer-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 14px;
+    padding: 18px;
+    overflow-y: auto;
+    flex: 1;
+    align-content: start;
+    scrollbar-width: thin;
+    scrollbar-color: #ffa502 #1a1529;
+}
+
+.customizer-items-grid::-webkit-scrollbar {
+    width: 6px;
+}
+.customizer-items-grid::-webkit-scrollbar-track {
+    background: #1a1529;
+    border-radius: 10px;
+}
+.customizer-items-grid::-webkit-scrollbar-thumb {
+    background: #ffa502;
+    border-radius: 10px;
+}
+
+/* --- Complete Card Sets View (Bigger Cards) --- */
+.customizer-items-grid.customizer-sets-view {
+    grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+    gap: 20px;
+    padding: 22px;
+}
+
+.customizer-set-card {
+    background: linear-gradient(160deg, #281d45 0%, #151026 100%);
+    border: 3px solid #ffa502;
+    border-radius: 24px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    min-height: 290px;
+}
+
+.customizer-set-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 45%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, transparent 100%);
+    pointer-events: none;
+    border-radius: 24px 24px 0 0;
+}
+
+.customizer-set-card:hover {
+    transform: translateY(-6px) scale(1.02);
+}
+
+/* === Rank Backgrounds for Sets (unified border, colored background) === */
+.customizer-set-card {
+    border-color: #5a4d7e !important; /* همەی یەک رەنگ */
+}
+
+.customizer-set-card.rank-uncommon {
+    background: linear-gradient(160deg, rgba(46,213,115,0.45) 0%, #1a1530 70%);
+    box-shadow: 0 8px 25px rgba(46, 213, 115, 0.35);
+}
+.customizer-set-card.rank-uncommon:hover {
+    background: linear-gradient(160deg, rgba(46,213,115,0.58) 0%, #201b38 70%);
+    box-shadow: 0 14px 35px rgba(46, 213, 115, 0.5);
+}
+
+.customizer-set-card.rank-gold {
+    background: linear-gradient(160deg, rgba(255,165,2,0.48) 0%, #1a1530 70%);
+    box-shadow: 0 8px 25px rgba(255, 165, 2, 0.35);
+}
+.customizer-set-card.rank-gold:hover {
+    background: linear-gradient(160deg, rgba(255,165,2,0.62) 0%, #201b38 70%);
+    box-shadow: 0 14px 35px rgba(255, 165, 2, 0.5);
+}
+
+.customizer-set-card.rank-legendary {
+    background: linear-gradient(160deg, rgba(255,71,87,0.48) 0%, #1a1530 70%);
+    box-shadow: 0 8px 28px rgba(255, 71, 87, 0.35);
+}
+.customizer-set-card.rank-legendary:hover {
+    background: linear-gradient(160deg, rgba(255,71,87,0.62) 0%, #201b38 70%);
+    box-shadow: 0 14px 40px rgba(255, 71, 87, 0.55);
+}
+
+.customizer-set-card.equipped {
+    outline: 2px solid #2ed573;
+    box-shadow: 0 0 20px rgba(46, 213, 115, 0.4);
+}
+
+.set-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 8px;
+    z-index: 5;
+}
+
+.set-rank-pill {
+    font-size: 0.76rem;
+    font-weight: 800;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.02em;
+    text-shadow: 1px 1px 2px #000;
+}
+
+.set-lock-indicator {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    z-index: 12;
+    font-size: 1.8rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7));
+}
+
+.set-card-img-wrapper {
+    width: 100%;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.set-card-img-wrapper img {
+    max-width: 95%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.65));
+    transition: transform 0.22s ease;
+}
+
+.customizer-set-card:hover .set-card-img-wrapper img {
+    transform: scale(1.06);
+}
+
+.set-card-info {
+    text-align: center;
+    margin-bottom: 12px;
+    width: 100%;
+}
+
+.set-card-name {
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    margin-bottom: 2px;
+}
+
+.set-card-subname {
+    font-size: 0.8rem;
+    color: #a4b0be;
+    font-weight: 600;
+}
+
+/* === Set Card: selected checkmark (no footer buttons) === */
+.customizer-set-card.equipped::after {
+    content: '✓';
+    position: absolute;
+    bottom: 10px;
+    left: 14px;
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #2ed573;
+    text-shadow: 0 0 8px rgba(46,213,115,0.9);
+    z-index: 10;
+}
+
+/* set-card-footer hidden — no buttons needed */
+.set-card-footer {
+    display: none;
+}
+
+/* --- Regular Item Cards --- */
+.customizer-item-card {
+    background: linear-gradient(145deg, #2a2044, #1e1838);
+    border: 2px solid #5a4d7e; /* همەی یەک رەنگ */
+    border-radius: 20px;
+    padding: 10px 8px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    min-height: 135px;
+    position: relative;
+    overflow: hidden;
+}
+
+.customizer-item-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+    border-radius: 20px 20px 0 0;
+    pointer-events: none;
+}
+
+.customizer-item-card:hover {
+    transform: translateY(-4px) scale(1.04);
+}
+
+.customizer-item-card.selected {
+    background: linear-gradient(145deg, #1d3d2f, #152e25);
+    box-shadow: 0 0 0 2px rgba(46, 213, 115, 0.6), 0 6px 20px rgba(46, 213, 115, 0.3);
+    transform: translateY(-2px);
+}
+
+.customizer-item-card.selected::after {
+    content: '✓';
+    position: absolute;
+    bottom: 8px;
+    left: 10px;
+    font-size: 0.85rem;
+    font-weight: 900;
+    color: #2ed573;
+    text-shadow: 0 0 6px rgba(46, 213, 115, 0.8);
+    z-index: 10;
+}
+
+/* === Rank Background Colors on Item Cards (border stays unified) === */
+.customizer-item-card.rank-uncommon {
+    background: linear-gradient(145deg, rgba(46,213,115,0.42) 0%, #1a1530 70%);
+}
+.customizer-item-card.rank-uncommon:hover {
+    background: linear-gradient(145deg, rgba(46,213,115,0.58) 0%, #201b38 70%);
+    box-shadow: 0 6px 20px rgba(46, 213, 115, 0.4);
+}
+
+.customizer-item-card.rank-gold {
+    background: linear-gradient(145deg, rgba(255,165,2,0.44) 0%, #1a1530 70%);
+}
+.customizer-item-card.rank-gold:hover {
+    background: linear-gradient(145deg, rgba(255,165,2,0.58) 0%, #201b38 70%);
+    box-shadow: 0 6px 20px rgba(255, 165, 2, 0.4);
+}
+
+.customizer-item-card.rank-legendary {
+    background: linear-gradient(145deg, rgba(255,71,87,0.44) 0%, #1a1530 70%);
+}
+.customizer-item-card.rank-legendary:hover {
+    background: linear-gradient(145deg, rgba(255,71,87,0.58) 0%, #201b38 70%);
+    box-shadow: 0 6px 22px rgba(255, 71, 87, 0.45);
+}
+
+/* === Background Cards — wide horizontal landscape cards === */
+.customizer-items-grid.customizer-bg-view {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 18px;
+}
+
+.customizer-bg-card {
+    background: linear-gradient(145deg, #2a2044, #1e1838);
+    border: 2px solid #5a4d7e;
+    border-radius: 18px;
+    padding: 8px 8px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    width: 100%;
+    position: relative;
+    /* overflow visible so the name below the thumb is not clipped */
+}
+
+.customizer-bg-card:hover {
+    transform: translateY(-3px) scale(1.01);
+}
+
+.customizer-bg-card.rank-uncommon {
+    background: linear-gradient(145deg, rgba(46,213,115,0.42) 0%, #1a1530 70%);
+}
+.customizer-bg-card.rank-gold {
+    background: linear-gradient(145deg, rgba(255,165,2,0.44) 0%, #1a1530 70%);
+}
+.customizer-bg-card.rank-legendary {
+    background: linear-gradient(145deg, rgba(255,71,87,0.44) 0%, #1a1530 70%);
+}
+
+.customizer-bg-card.selected {
+    box-shadow: 0 0 0 2px rgba(46,213,115,0.8), 0 6px 20px rgba(46,213,115,0.4);
+    transform: translateY(-2px);
+}
+
+.customizer-bg-card.selected::after {
+    content: '✓';
+    position: absolute;
+    bottom: 10px;
+    left: 12px;
+    font-size: 1rem;
+    font-weight: 900;
+    color: #2ed573;
+    text-shadow: 0 0 6px rgba(46,213,115,0.9);
+    z-index: 10;
+}
+
+.customizer-bg-thumb {
+    width: 100%;
+    aspect-ratio: 16 / 5;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.customizer-bg-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.22s ease;
+}
+
+.customizer-bg-card:hover .customizer-bg-thumb img {
+    transform: scale(1.05);
+}
+
+.customizer-bg-name {
+    width: 100%;
+    text-align: right;
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+    padding: 0 4px 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    direction: rtl;
+}
+
+/* === Background Preview: scrollable panorama strip === */
+.customizer-preview-bg-mode {
+    width: 100%;
+    height: 100%;
+    border-radius: 18px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    scroll-behavior: auto; /* instant \u2014 smooth causes ~0.5s delay on drag */
+    cursor: grab;
+    scrollbar-width: thin;
+    scrollbar-color: #ffa502 #1a1529;
+}
+
+.customizer-preview-bg-mode:active {
+    cursor: grabbing;
+}
+
+.customizer-preview-bg-mode::-webkit-scrollbar {
+    height: 4px;
+}
+.customizer-preview-bg-mode::-webkit-scrollbar-track {
+    background: #1a1529;
+}
+.customizer-preview-bg-mode::-webkit-scrollbar-thumb {
+    background: #ffa502;
+    border-radius: 4px;
+}
+
+.customizer-preview-bg-img {
+    height: 100%;
+    width: auto;
+    min-width: 100%;
+    object-fit: cover;
+    object-position: center;
+    flex-shrink: 0;
+    border-radius: 18px;
+    display: block;
+    /* Prevent native browser image drag */
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+}
+
+.item-rank-pill {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 8px;
+    color: #fff;
+    text-shadow: 1px 1px 1px #000;
+    z-index: 6;
+}
+
+.item-lock-badge {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: 0.85rem;
+    z-index: 6;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+.item-price-tag {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #ffa502;
+    background: rgba(0, 0, 0, 0.65);
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-shadow: 1px 1px 1px #000;
+    z-index: 6;
+}
+
+/* --- Thumbnail --- */
+.item-thumb-wrapper {
+    width: 100%;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.item-thumb-wrapper img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
+    transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.customizer-item-card:hover .item-thumb-wrapper img {
+    transform: scale(1.1);
+    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.7)) brightness(1.1);
+}
+
+/* --- None Card --- */
+.item-none-icon {
+    font-size: 2.2rem;
+    line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+/* --- ID Badge label --- */
+.item-id-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #8e84a8;
+    background: rgba(0, 0, 0, 0.35);
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
+    max-width: 100%;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.customizer-item-card.selected .item-id-badge {
+    color: #2ed573;
+}
+
+.item-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #a4b0be;
+    text-align: center;
+}
+
+.customizer-item-card.selected .item-label {
+    color: #2ed573;
+}
+
+
+/* Character Composite DOM Hierarchy */
+.mv-character-composite {
+    position: relative;
+    width: 320px;
+    height: 400px;
+    pointer-events: none;
+}
+
+.mv-layer-group {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.mv-group-body {
+    z-index: 10;
+}
+
+.mv-group-head {
+    z-index: 20;
+    transform-origin: 50% 55%;
+}
+
+.mv-part {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: center center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+}
+
+.mv-part img {
+    max-width: none;
+    max-height: none;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* Explicit Category Stacking Hierarchy (Mouth is strictly underneath Beard/Facials) */
+.mv-part-ears {
+    z-index: 2;
+}
+
+.mv-part-bodys {
+    z-index: 5;
+}
+
+.mv-part-head_shapes {
+    z-index: 10;
+}
+
+.mv-part-eyes {
+    z-index: 15;
+}
+
+.mv-part-eyeborws {
+    z-index: 20;
+}
+
+.mv-part-haires {
+    z-index: 30;
+}
+
+.mv-part-mouths {
+    z-index: 35 !important;
+}
+
+.mv-part-facials {
+    z-index: 40 !important;
+}
+
+.mv-part-noses {
+    z-index: 45;
+}
+
+.mv-part-body_enquipments {
+    z-index: 50;
+}
+
+.mv-part-head_enquipments {
+    z-index: 55;
+}
+
+/* Tablet / mid-size screens */
+@media (max-width: 960px) {
+    .customizer-items-grid {
+        grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+        gap: 12px;
+        padding: 14px;
+    }
+
+    .customizer-item-card {
+        min-height: 115px;
+    }
+
+    .item-thumb-wrapper {
+        height: 70px;
+    }
+}
+
+/* Mobile responsive layout for Customizer */
+@media (max-width: 768px) {
+    .customizer-layout {
+        flex-direction: column;
+        height: auto;
+        overflow-y: auto;
+    }
+
+    .customizer-preview-col {
+        height: 260px;
+        flex: none;
+    }
+
+    .customizer-preview-stage {
+        height: 210px;
+        transform: scale(0.72);
+    }
+
+    .customizer-drawer-col {
+        flex: 1;
+        min-height: 340px;
+    }
+
+    .customizer-categories {
+        gap: 6px;
+        padding: 8px;
+    }
+
+    .customizer-cat-tab {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+        border-radius: 12px;
+    }
+
+    .customizer-items-grid {
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .customizer-item-card {
+        min-height: 110px;
+        border-radius: 16px;
+    }
+
+    .item-thumb-wrapper {
+        height: 65px;
+    }
+}
+
+/* Small phones */
+@media (max-width: 420px) {
+    .customizer-items-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .customizer-item-card {
+        min-height: 100px;
+    }
+
+    .item-thumb-wrapper {
+        height: 58px;
+    }
+
+    .item-id-badge {
+        font-size: 0.7rem;
+        padding: 1px 6px;
+    }
+}
+
+/* =============================================================================
+   CUSTOMIZER PURCHASE MODAL & TOAST NOTIFICATION
+   ============================================================================= */
+#customizer-buy-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(8, 5, 18, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+#customizer-buy-modal.active,
+#customizer-buy-modal[style*="display: flex"] {
+    display: flex !important;
+}
+
+.btn-item-buy {
+    width: 100%;
+    margin-top: 4px;
+    padding: 4px 6px;
+    background: linear-gradient(180deg, #ffa502 0%, #e67e22 100%);
+    border: 2px solid #fff;
+    border-radius: 12px;
+    color: #fff;
+    font-family: var(--font-kurdish, sans-serif);
+    font-weight: 800;
+    font-size: 0.72rem;
+    cursor: pointer;
+    text-shadow: 1px 1px 1px #000;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    z-index: 10;
+}
+
+.btn-item-buy:hover {
+    transform: scale(1.06);
+    box-shadow: 0 4px 12px rgba(255, 165, 2, 0.6);
+}
+
+.btn-item-buy:active {
+    transform: scale(0.96);
+}
+
+.customizer-modal-box {
+    max-width: 380px;
+    width: 90%;
+    background: linear-gradient(160deg, #2b1f48 0%, #151025 100%);
+    border: 3px solid #ffa502;
+    border-radius: 28px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.85);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.customizer-modal-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    width: 100%;
+}
+
+.modal-rank-badge {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #fff;
+    padding: 4px 14px;
+    border-radius: 12px;
+    letter-spacing: 0.02em;
+    text-shadow: 1px 1px 2px #000;
+}
+
+.customizer-modal-title {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: #ffa502;
+    margin: 0;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.customizer-modal-preview {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(14, 11, 24, 0.6);
+    border: 2px solid #433863;
+    border-radius: 20px;
+    margin: 0 auto 14px;
+}
+
+.customizer-modal-preview img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.7));
+}
+
+.customizer-modal-desc {
+    font-size: 0.92rem;
+    color: #dcdde1;
+    line-height: 1.55;
+    margin-bottom: 14px;
+    padding: 0 10px;
+}
+
+.customizer-modal-price-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #fff;
+    background: rgba(14, 11, 24, 0.75);
+    border: 2px solid #3d3460;
+    padding: 10px 18px;
+    border-radius: 16px;
+    margin-bottom: 18px;
+    width: 100%;
+}
+
+.price-pill-coin {
+    color: #f1c40f;
+    font-weight: 900;
+}
+
+.price-pill-diamond {
+    color: #54a0ff;
+    font-weight: 900;
+}
+
+.price-pill-free {
+    color: #2ed573;
+    font-weight: 900;
+}
+
+.customizer-modal-actions {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    justify-content: center;
+}
+
+/* Toast notification */
+.customizer-toast-popup {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(25px);
+    background: rgba(22, 16, 40, 0.96);
+    border: 2px solid #ffa502;
+    border-radius: 20px;
+    padding: 12px 24px;
+    color: #fff;
+    font-family: var(--font-kurdish, sans-serif);
+    font-weight: 800;
+    font-size: 0.98rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 165, 2, 0.3);
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1000;
+    direction: rtl;
+    white-space: nowrap;
+}
+
+.customizer-toast-popup.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* =====================================================================
+   LEGENDARY SET CARD - Background Badge (top-left thumbnail)
+   ===================================================================== */
+.customizer-set-card {
+    position: relative;
+}
+
+/* Legendary set card glow border */
+.customizer-set-card.legendary-set-card {
+    border-color: rgba(255, 71, 87, 0.6);
+    box-shadow: 0 0 0 2px rgba(255,71,87,0.3), 0 6px 24px rgba(255,71,87,0.25);
+}
+
+.customizer-set-card.legendary-set-card:hover {
+    box-shadow: 0 0 0 2px rgba(255,71,87,0.7), 0 8px 32px rgba(255,71,87,0.45);
+}
+
+/* Exclusive background thumbnail badge — top-left corner */
+.set-card-bg-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 15;
+}
+
+/* =====================================================================
+   CHARACTER REVIEW PANEL WIDGETS (Top-Left BG Preview & Bottom-Right Effect Toggle)
+   ===================================================================== */
+
+/* =====================================================================
+   CHARACTER REVIEW PANEL WIDGETS (Top-Left BG Button & Bottom-Right Effect Button)
+   ===================================================================== */
+
+/* ─── Top-Left: Exclusive Background Preview Button ─── */
+.preview-set-bg-wrap {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 35;
+    width: max-content;
+}
+
+#customizer-preview-set-bg {
+    position: absolute !important;
+    top: 14px !important;
+    left: 14px !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: max-content !important;
+}
+
+.preview-set-bg-btn {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 170px;
+    max-width: 170px;
+    min-height: 100px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+}
+
+.preview-btn-bg-thumb {
+    order: 2;
+    width: 110px;
+    height: 50px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.preview-set-bg-btn span {
+    order: 1;
+    white-space: nowrap;
+}
+
+/* ─── Bottom-Right: Effect Toggle Button (Matches Purchase Button Size & Style) ─── */
+.preview-effect-toggle-wrap {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    z-index: 35;
+}
+
+#customizer-preview-effect-toggle {
+    position: absolute !important;
+    top: auto !important;
+    left: auto !important;
+    right: 14px !important;
+    bottom: 14px !important;
+    width: max-content !important;
+    max-width: 190px;
+}
+
+.customizer-preview-col > .preview-set-bg-wrap,
+.customizer-preview-col > .preview-effect-toggle-wrap,
+.customizer-preview-col > .customizer-preview-buy-bar,
+.customizer-preview-col > .btn-randomize-preview {
+    position: absolute;
+    z-index: 35;
+}
+
+.preview-effect-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    white-space: nowrap;
+}
+
+/* =====================================================================
+   SET CARDS - Feature Badges & Chips (Pinned to Top-Left)
+   ===================================================================== */
+.set-features-badges {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 15;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+    pointer-events: none;
+}
+
+.set-feature-chip {
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    line-height: 1.3;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.set-feature-chip[aria-label] {
+    width: 30px;
+    height: 30px;
+    justify-content: center;
+    padding: 0;
+    font-size: 1rem;
+}
+
+.set-feature-chip.effect-chip {
+    background: linear-gradient(135deg, #8e44ad, #9b59b6);
+    border: 1.5px solid #d291ff;
+    color: #ffffff;
+}
+
+.set-feature-chip.bg-chip {
+    background: linear-gradient(135deg, #d35400, #e67e22);
+    border: 1.5px solid #f39c12;
+    color: #ffffff;
+}
+
+/* =====================================================================
+   FULLSCREEN BACKGROUND PREVIEW OVERLAY
+   ===================================================================== */
+.bg-fullscreen-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.88);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bg-overlay-fade-in 0.22s ease forwards;
+    backdrop-filter: blur(4px);
+}
+
+@keyframes bg-overlay-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.bg-fullscreen-inner {
+    position: relative;
+    width: min(92vw, 800px);
+    max-height: 90vh;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 0 2px rgba(255,210,0,0.5);
+    display: flex;
+    flex-direction: column;
+    animation: bg-card-pop-in 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes bg-card-pop-in {
+    from { transform: scale(0.88); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+}
+
+.bg-fullscreen-img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+    flex-shrink: 0;
+}
+
+.bg-fullscreen-label {
+    background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.65) 100%);
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    direction: rtl;
+}
+
+.bg-fullscreen-name {
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: #ffd700;
+    font-family: var(--font-kurdish, sans-serif);
+    text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+}
+
+.bg-fullscreen-hint {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.7);
+    font-family: var(--font-kurdish, sans-serif);
+}
+
+.bg-fullscreen-close-btn {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(30,24,60,0.92);
+    border: 2px solid rgba(255,255,255,0.25);
+    border-radius: 14px;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 800;
+    font-family: var(--font-kurdish, sans-serif);
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+}
+
+.bg-fullscreen-close-btn:hover {
+    background: rgba(255,71,87,0.85);
+    border-color: rgba(255,71,87,0.9);
+    transform: scale(1.06);
+}

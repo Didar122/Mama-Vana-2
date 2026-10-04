@@ -1,0 +1,872 @@
+/* ===================================================
+   Mama Vana - Visual Dev Position, Anchor & Cute CUT Studio CSS
+   =================================================== */
+
+#screen-dev-editor {
+    flex-direction: column;
+    background: #110e1b;
+    padding: 12px;
+    height: 100%;
+}
+
+.dev-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+    z-index: 20;
+}
+
+.dev-title {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #2ed573;
+    text-shadow: 2px 2px 0 #000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Studio Mode Tabs */
+.dev-mode-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.dev-mode-tab {
+    padding: 8px 18px;
+    background: #201a33;
+    border: 2px solid #3d315c;
+    border-radius: 14px;
+    color: #a4b0be;
+    font-family: var(--font-kurdish);
+    font-weight: 800;
+    font-size: 0.92rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.dev-mode-tab.active {
+    background: linear-gradient(180deg, #2ed573 0%, #10ac84 100%);
+    border-color: #fff;
+    color: #000;
+    box-shadow: 0 4px 12px rgba(46, 213, 115, 0.4);
+}
+
+.dev-layout {
+    display: flex;
+    flex: 1;
+    gap: 12px;
+    height: calc(100% - 95px);
+    overflow: hidden;
+}
+
+/* Stage Area */
+.dev-stage-col {
+    flex: 1.15;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #181424;
+    border: 3px solid #2d2444;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    direction: ltr;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.dev-stage-col::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: rgba(46, 213, 115, 0.35);
+    pointer-events: none;
+}
+
+.dev-stage-col::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 2px;
+    background: rgba(46, 213, 115, 0.35);
+    pointer-events: none;
+}
+
+.dev-stage-wrapper {
+    position: relative;
+    width: 340px;
+    height: 440px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: auto;
+    direction: ltr;
+    pointer-events: none;
+}
+
+.dev-stage-wrapper>* {
+    pointer-events: auto;
+}
+
+/* Yellow Blueprint Reference Ghost */
+.dev-blueprint-ghost {
+    position: absolute;
+    width: 320px;
+    height: 420px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 6;
+    display: block;
+    opacity: 0.75;
+}
+
+.dev-blueprint-ghost::before {
+    content: 'Head (سەر)';
+    position: absolute;
+    top: calc(50% - 65px);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    height: 170px;
+    border: 2.5px dashed #f1c40f;
+    border-radius: 50% 50% 45% 45%;
+    box-shadow: 0 0 14px rgba(241, 196, 15, 0.4);
+    color: #f1c40f;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-align: center;
+    padding-top: 4px;
+}
+
+.dev-blueprint-ghost::after {
+    content: 'Body (لاشە)';
+    position: absolute;
+    top: calc(50% + 85px);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 170px;
+    border: 2.5px dashed #f1c40f;
+    border-radius: 35px 35px 20px 20px;
+    box-shadow: 0 0 14px rgba(241, 196, 15, 0.4);
+    color: #f1c40f;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-align: center;
+    padding-top: 4px;
+}
+
+/* ===================================================
+   Cute CUT Interactive Canvas Bounding Box & 8 Handles
+   =================================================== */
+.cutecut-transform-box {
+    position: absolute;
+    border: 2.5px solid #00d2d3;
+    box-shadow: 0 0 16px rgba(0, 210, 211, 0.6), inset 0 0 8px rgba(0, 210, 211, 0.2);
+    cursor: move;
+    z-index: 80;
+    display: none;
+    touch-action: none;
+    box-sizing: border-box;
+}
+
+.cutecut-transform-box.active {
+    display: block;
+}
+
+.cutecut-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #00d2d3;
+    border: 2px solid #ffffff;
+    border-radius: 3px;
+    z-index: 85;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.cutecut-handle.nw {
+    top: -7px;
+    left: -7px;
+    cursor: nwse-resize;
+}
+
+.cutecut-handle.n {
+    top: -7px;
+    left: calc(50% - 6px);
+    cursor: ns-resize;
+}
+
+.cutecut-handle.ne {
+    top: -7px;
+    right: -7px;
+    cursor: nesw-resize;
+}
+
+.cutecut-handle.e {
+    top: calc(50% - 6px);
+    right: -7px;
+    cursor: ew-resize;
+}
+
+.cutecut-handle.se {
+    bottom: -7px;
+    right: -7px;
+    cursor: nwse-resize;
+}
+
+.cutecut-handle.s {
+    bottom: -7px;
+    left: calc(50% - 6px);
+    cursor: ns-resize;
+}
+
+.cutecut-handle.sw {
+    bottom: -7px;
+    left: -7px;
+    cursor: nesw-resize;
+}
+
+.cutecut-handle.w {
+    top: calc(50% - 6px);
+    left: -7px;
+    cursor: ew-resize;
+}
+
+.cutecut-rot-pin {
+    position: absolute;
+    top: -26px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 22px;
+    background: #00d2d3;
+    pointer-events: none;
+}
+
+.cutecut-rot-handle {
+    position: absolute;
+    top: -34px;
+    left: calc(50% - 8px);
+    width: 16px;
+    height: 16px;
+    background: #ff9f43;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    cursor: grab;
+    z-index: 90;
+    box-shadow: 0 0 8px rgba(255, 159, 67, 0.8);
+}
+
+.cutecut-box-badge {
+    position: absolute;
+    bottom: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(18, 14, 28, 0.95);
+    border: 1px solid #00d2d3;
+    border-radius: 8px;
+    color: #00d2d3;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* Attacker Preview FX Container on stage */
+.dev-attack-fx {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 35;
+}
+
+.dev-attack-fx img {
+    max-width: 280px;
+    max-height: 280px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+    user-select: none;
+    -webkit-user-drag: none;
+    display: block;
+}
+
+.dev-hitbox-overlay {
+    position: absolute;
+    border: 2px dashed #ff4757;
+    background: rgba(255, 71, 87, 0.15);
+    border-radius: 12px;
+    pointer-events: none;
+    z-index: 45;
+    display: none;
+}
+
+.dev-stage-tip {
+    position: absolute;
+    bottom: 8px;
+    background: rgba(0, 0, 0, 0.75);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: #ffa502;
+    font-weight: 700;
+    pointer-events: none;
+    z-index: 30;
+}
+
+/* Control Panel Column */
+.dev-controls-col {
+    flex: 1;
+    background: #181424;
+    border: 3px solid #2d2444;
+    border-radius: 20px;
+    padding: 14px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: #2ed573 #141021;
+}
+
+.dev-controls-col::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dev-controls-col::-webkit-scrollbar-thumb {
+    background: #2ed573;
+    border-radius: 4px;
+}
+
+.dev-section-title {
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: #2ed573;
+    border-bottom: 2px solid #2d2444;
+    padding-bottom: 5px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dev-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.dev-row label {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #dcdde1;
+}
+
+.dev-select {
+    background: #120e1c;
+    border: 2px solid #3d315c;
+    border-radius: 12px;
+    padding: 7px 12px;
+    color: #fff;
+    font-family: var(--font-kurdish);
+    font-size: 0.88rem;
+    font-weight: 700;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+}
+
+.dev-select:focus {
+    border-color: #2ed573;
+}
+
+.dev-slider-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dev-slider-group input[type="range"] {
+    flex: 1;
+    height: 6px;
+    background: #2d2444;
+    border-radius: 5px;
+    accent-color: #2ed573;
+    cursor: pointer;
+}
+
+.dev-input-num {
+    width: 65px;
+    background: #120e1c;
+    border: 2px solid #3d315c;
+    border-radius: 10px;
+    padding: 4px 6px;
+    color: #2ed573;
+    font-family: monospace;
+    font-size: 0.9rem;
+    font-weight: 900;
+    text-align: center;
+    outline: none;
+}
+
+.dev-item-switcher {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.dev-btn-small {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    border-radius: 10px;
+}
+
+.dev-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+/* ===================================================
+   Cute CUT Multi-Track Timeline & Toolbar (LTR Time Track)
+   =================================================== */
+.cutecut-timeline-box {
+    background: #120e1c;
+    border: 2px solid #3d315c;
+    border-radius: 16px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 6px;
+    direction: ltr;
+    text-align: left;
+}
+
+.cutecut-ruler-header {
+    position: relative;
+    height: 26px;
+    background: #1d172e;
+    border-radius: 8px;
+    border: 1px solid #4a3e6b;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    user-select: none;
+    cursor: pointer;
+    direction: ltr;
+}
+
+.cutecut-ruler-ticks {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 0.7rem;
+    font-family: monospace;
+    color: #82ccdd;
+    font-weight: 800;
+    direction: ltr;
+}
+
+.cutecut-playhead-needle {
+    position: absolute;
+    top: 0;
+    bottom: -180px;
+    left: 10px;
+    width: 2px;
+    background: #00d2d3;
+    z-index: 50;
+    pointer-events: none;
+    box-shadow: 0 0 8px #00d2d3;
+}
+
+.cutecut-playhead-needle::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -5px;
+    width: 12px;
+    height: 12px;
+    background: #00d2d3;
+    border-radius: 3px;
+    transform: rotate(45deg);
+}
+
+.cutecut-tracks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 180px;
+    overflow-y: auto;
+    position: relative;
+    padding: 2px;
+    direction: ltr;
+}
+
+.cutecut-track-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #1c162e;
+    border: 2px solid #3d315c;
+    border-radius: 12px;
+    padding: 6px 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    direction: ltr;
+    text-align: left;
+}
+
+.cutecut-track-card:hover {
+    border-color: #00d2d3;
+    background: #251d3d;
+}
+
+.cutecut-track-card.active {
+    border-color: #00d2d3;
+    background: #17283c;
+    box-shadow: 0 0 10px rgba(0, 210, 211, 0.4);
+}
+
+.cutecut-track-thumb {
+    width: 36px;
+    height: 36px;
+    background: #100c19;
+    border-radius: 8px;
+    border: 1px solid #576574;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.cutecut-track-thumb img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.cutecut-track-info {
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+    flex-shrink: 0;
+    direction: ltr;
+    text-align: left;
+}
+
+.cutecut-track-name {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #f1f2f6;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.cutecut-track-meta {
+    font-size: 0.7rem;
+    color: #00d2d3;
+    font-family: monospace;
+}
+
+.cutecut-track-reorder-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-shrink: 0;
+    direction: ltr;
+}
+
+.btn-track-order {
+    background: #141021;
+    border: 1px solid #4a3e6b;
+    color: #00d2d3;
+    font-size: 0.65rem;
+    padding: 2px 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    line-height: 1;
+    transition: all 0.12s ease;
+}
+
+.btn-track-order:hover {
+    background: #00d2d3;
+    color: #000;
+    border-color: #fff;
+}
+
+/* Interactive Multi-Track Timeline Channel & Clip Bar */
+.cutecut-track-timeline-channel {
+    flex: 1;
+    position: relative;
+    height: 32px;
+    background: #100c19;
+    border: 1.5px solid #3d315c;
+    border-radius: 8px;
+    overflow: hidden;
+    user-select: none;
+    direction: ltr;
+}
+
+.cutecut-clip-block {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    background: linear-gradient(90deg, #0984e3 0%, #00cec9 100%);
+    border: 1.5px solid #ffffff;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 3px;
+    cursor: grab;
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    touch-action: none;
+    box-sizing: border-box;
+    direction: ltr;
+}
+
+.cutecut-clip-block.active {
+    border-color: #ffa502;
+    box-shadow: 0 0 10px rgba(255, 165, 2, 0.7);
+}
+
+.cutecut-clip-handle {
+    width: 8px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 3px;
+    cursor: ew-resize;
+    flex-shrink: 0;
+}
+
+.cutecut-clip-handle:hover {
+    background: #ffffff;
+}
+
+.cutecut-clip-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 1px 1px 0 #000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+    padding: 0 4px;
+}
+
+/* Cute CUT Bottom Action Toolbar */
+.cutecut-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    background: #141021;
+    border: 2px solid #3d315c;
+    border-radius: 14px;
+    padding: 8px;
+    justify-content: center;
+    margin-bottom: 6px;
+}
+
+.cutecut-tool-btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+/* Cute CUT Point A -> Point B Transition Panel */
+.cutecut-trans-panel {
+    background: #141021;
+    border: 2px solid #3d315c;
+    border-radius: 14px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+/* Dev Export Modal */
+.dev-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    backdrop-filter: blur(8px);
+}
+
+.dev-modal.active {
+    display: flex;
+}
+
+.dev-modal-content {
+    background: #1e1930;
+    border: 3px solid #2ed573;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 650px;
+    max-height: 88%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8);
+}
+
+.dev-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.dev-modal-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #2ed573;
+}
+
+.dev-modal-desc {
+    font-size: 0.88rem;
+    color: #a4b0be;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.dev-modal-textarea {
+    width: 100%;
+    height: 260px;
+    background: #0e0b17;
+    border: 2px solid #3a2e54;
+    border-radius: 12px;
+    padding: 12px;
+    color: #2ed573;
+    font-family: 'Consolas', monospace;
+    font-size: 0.85rem;
+    resize: none;
+    direction: ltr;
+    text-align: left;
+    margin-bottom: 14px;
+    outline: none;
+    line-height: 1.4;
+}
+
+.dev-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+@media (max-width: 768px) {
+    .dev-layout {
+        flex-direction: column;
+        height: auto;
+        overflow-y: auto;
+    }
+
+    .dev-stage-col {
+        height: 280px;
+        flex: none;
+    }
+
+    .dev-stage-wrapper {
+        transform: scale(0.75);
+    }
+
+    .dev-controls-col {
+        flex: 1;
+        min-height: 400px;
+    }
+}
+
+/* Shooting Dev Frame Chips & Muzzle Indicator */
+.dev-shooting-chip {
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid #4a3e7a;
+    color: #e0d0f5;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+}
+
+.dev-shooting-chip:hover {
+    border-color: #ffa502;
+    background: rgba(255, 165, 2, 0.15);
+    transform: translateY(-2px);
+}
+
+.dev-shooting-chip.active {
+    border-color: #ff4757;
+    background: rgba(255, 71, 87, 0.25);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 71, 87, 0.4);
+}
+
+.dev-shooting-chip img {
+    width: 28px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.dev-muzzle-crosshair {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #ff4757;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 100;
+    box-shadow: 0 0 8px #ff4757;
+}
+
+.dev-muzzle-crosshair::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    background: #ff4757;
+    border-radius: 50%;
+}
