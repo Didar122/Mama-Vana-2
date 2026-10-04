@@ -7,7 +7,7 @@
 // Set to 'show' to make the Dev Studio button visible in Main Menu & HUD.
 // Set to 'hidden' to completely hide the Dev Studio button.
 // =============================================================================
-const DEV_STUDIO_VISIBLE = 'hidden'; // Options: 'show' | 'hidden'
+const DEV_STUDIO_VISIBLE = 'show'; // Options: 'show' | 'hidden'
 
 // =============================================================================
 // ECONOMY & CURRENCY KEYS
@@ -396,6 +396,81 @@ const CARD_SETS = [
             ears: '99.png',
             facials: '1.png',
             head_enquipments: null,
+            body_enquipments: null
+        }
+    },
+    {
+        id: 'lataman',
+        name: 'لاتەمان',
+        subName: 'پیاوی شەوی تەنگانە',
+        image: 'assets/sets/lataman.png',
+        rank: 'legendary',
+        hasEffect: true,
+        hasExclusiveBackground: true,
+        priceCoins: 600,
+        priceDiamonds: 15,
+        unlockedByDefault: false,
+        items: {
+            bodys: '9.png',
+            head_shapes: '1.png',
+            haires: null,
+            eyeborws: '1.png',
+            eyes: '1.png',
+            noses: '1.png',
+            mouths: '1.png',
+            ears: '99.png',
+            facials: '1.png',
+            head_enquipments: '307.png',
+            body_enquipments: null
+        }
+    },
+    {
+        id: 'santa',
+        name: 'ڤانە نوێل',
+        subName: 'پیاوە دەست و دڵ باشەکە',
+        image: 'assets/sets/santa.png',
+        rank: 'legendary',
+        hasEffect: true,
+        hasExclusiveBackground: true,
+        priceCoins: 600,
+        priceDiamonds: 15,
+        unlockedByDefault: false,
+        items: {
+            bodys: '10.png',
+            head_shapes: '1.png',
+            haires: null,
+            eyeborws: '1.png',
+            eyes: '1.png',
+            noses: '1.png',
+            mouths: '1.png',
+            ears: '99.png',
+            facials: '13.png',
+            head_enquipments: '6.png',
+            body_enquipments: null
+        }
+    },
+    {
+        id: 'batman',
+        name: 'ڤانە باتمان',
+        subName: 'پیاوە سوپەر هیرۆکە',
+        image: 'assets/sets/batman.PNG',
+        rank: 'legendary',
+        hasEffect: true,
+        hasExclusiveBackground: true,
+        priceCoins: 600,
+        priceDiamonds: 15,
+        unlockedByDefault: false,
+        items: {
+            bodys: '11.png',
+            head_shapes: '1.png',
+            haires: null,
+            eyeborws: '1.png',
+            eyes: '1.png',
+            noses: '276.png',
+            mouths: '202.png',
+            ears: null,
+            facials: null,
+            head_enquipments: '7.png',
             body_enquipments: null
         }
     },
@@ -943,6 +1018,9 @@ function getItemRankAndPrice(category, file) {
 const AVAILABLE_BACKGROUNDS = [
     { id: '17.png',                name: 'هەولێری کۆن',           file: '17.png',              rank: 'legendary', priceCoins: 0,   priceDiamonds: 0,  unlocked: false, exclusiveSetId: 'parti'          },
     { id: 'kurdish_home_at_night.png', name: 'ماڵی کوردی لە شەو', file: 'kurdish home at night.png', rank: 'legendary', priceCoins: 0, priceDiamonds: 0, unlocked: false, exclusiveSetId: 'kurdish' },
+    { id: 'gothic_city.png',       name: 'گۆثەم سیتی',            file: 'Gothic City.png',     rank: 'legendary', priceCoins: 0,   priceDiamonds: 0,  unlocked: false, exclusiveSetId: 'batman'        },
+    { id: 'arabic_city.png',       name: 'شاری عەرەبی',            file: 'Arabic City.png',     rank: 'legendary', priceCoins: 0,   priceDiamonds: 0,  unlocked: false, exclusiveSetId: 'lataman'       },
+    { id: 'snowy_village.png',     name: 'گوندی بەفرین',           file: 'Snowy Village.png',   rank: 'legendary', priceCoins: 0,   priceDiamonds: 0,  unlocked: false, exclusiveSetId: 'santa'         },
     { id: '15.png',                name: 'ناوماڵی کوردی',         file: '15.png',              rank: 'gold',      priceCoins: 100, priceDiamonds: 0,  unlocked: false },
     { id: '16.png',                name: 'سروشتی کوردستان',      file: '16.png',              rank: 'legendary', priceCoins: 250, priceDiamonds: 10, unlocked: false },
     { id: 'god_of_war.png',        name: 'گاد ئۆف واڕ',           file: 'god of war.png',      rank: 'legendary', priceCoins: 0,   priceDiamonds: 0,  unlocked: false, exclusiveSetId: 'god_of_war'     },

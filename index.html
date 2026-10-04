@@ -110,7 +110,11 @@
                 <!-- Menu Buttons -->
                 <nav class="menu-buttons-list">
                     <button id="btn-menu-play" class="btn-cartoon btn-red">
-                        <span>🎮</span> یاری بکە
+                        <span>🎮</span> یاری سەرەکی
+                    </button>
+
+                    <button id="btn-menu-mini-games" class="btn-cartoon btn-green">
+                        <span>🎣</span> کورتە یاریەکان
                     </button>
 
                     <button id="btn-menu-customize" class="btn-cartoon btn-blue">
@@ -150,7 +154,61 @@
         </section>
 
         <!-- ==============================================
-             SCREEN 3: CHARACTER CUSTOMIZER
+             SCREEN 3: MINI GAMES
+             ============================================== -->
+        <section id="screen-mini-games" class="game-screen">
+            <div class="mini-games-topbar">
+                <button id="btn-mini-games-back" class="btn-cartoon btn-red">
+                    <span aria-hidden="true"></span> گەڕانەوە بۆ مێنیو
+                </button>
+                <h1 class="mini-games-title">کورتە یاریەکان</h1>
+            </div>
+
+            <main class="mini-games-main">
+                <p class="mini-games-intro">یارییەک هەڵبژێرە و کاتێکی خۆش بەسەر بەرە لەگەڵ یاریە کورتەکانی مامە ڤانە!</p>
+                <section class="mini-games-pond" aria-labelledby="mini-games-list-title">
+                    <h2 id="mini-games-list-title" class="mini-games-pond-label">یارییەکانی ئێستا</h2>
+                    <div class="mini-games-grid">
+                        <a class="mini-game-card" href="mini games/Vana Masigr/index.html" aria-label="دەستپێکردنی ڤانە ماسیگر">
+                            <span class="mini-game-water-life" aria-hidden="true">
+                                <img class="mini-game-fish mini-game-fish--26" src="mini games/Vana Masigr/assets/sprites/spr_fish26.png" alt="" draggable="false">
+                                <img class="mini-game-fish mini-game-fish--10" src="mini games/Vana Masigr/assets/sprites/spr_fish10.png" alt="" draggable="false">
+                                <span class="mini-game-bubbles" aria-hidden="true">
+                                    <i></i><i></i><i></i><i></i><i></i><i></i>
+                                </span>
+                            </span>
+                            <span class="mini-game-art">
+                                <img src="mini games/Vana Masigr/thumb.png" alt="ئایکۆنی یاری ڤانە ماسیگر" draggable="false">
+                            </span>
+                            <small>ماسی بگرە لەگەڵ پیاوە فرەچەشنەکە!</small>
+                        </a>
+                    </div>
+                </section>
+            </main>
+
+            <div class="radio-widget" data-radio-widget>
+                <div class="radio-antenna"></div>
+                <div class="radio-display">
+                    <span class="radio-display-dot"></span>
+                    <span data-radio-title>مامە ڤانە FM</span>
+                </div>
+                <div class="radio-speakers">
+                    <span></span><span></span>
+                </div>
+                <div class="radio-controls">
+                    <button class="radio-control-btn" data-radio-action="previous" title="گۆرانی پێشوو"><span class="emoji-icon">⏮</span></button>
+                    <button class="radio-control-btn radio-play-btn" data-radio-action="toggle" title="دەستپێکردن و ڕاگرتن"><span class="emoji-icon">▶</span></button>
+                    <button class="radio-control-btn" data-radio-action="next" title="گۆرانی داهاتوو"><span class="emoji-icon">⏭</span></button>
+                </div>
+                <label class="radio-volume" title="دەنگی ڕادیۆ">
+                    <span class="emoji-icon">🔊</span>
+                    <input type="range" min="0" max="1" step="0.01" value="0.25" data-radio-volume aria-label="دەنگی ڕادیۆ">
+                </label>
+            </div>
+        </section>
+
+        <!-- ==============================================
+             SCREEN 4: CHARACTER CUSTOMIZER
              ============================================== -->
         <section id="screen-customizer" class="game-screen">
             <div class="customizer-top-bar">
@@ -1610,8 +1668,8 @@
 
             <!-- Warning icon + title -->
             <div class="age-prompt-icon">🔞</div>
-            <h2 id="age-prompt-title" class="age-prompt-title">کام دەنگ دەتەوێ؟</h2>
-            <p class="age-prompt-subtitle">یاری مامە ڤانە دوو جۆر دەنگی کوردی هەیە کە لە کاتی لێدان دەخرێنەوە:</p>
+            <h2 id="age-prompt-title" class="age-prompt-title">کام دەنگت دەوێ؟</h2>
+            <p class="age-prompt-subtitle">یاری مامە ڤانە دوو شێواز دەنگ و قسەکردنی هەیە کە لە کاتی لێدان لە کارەکتەرەکە دەبیسترێن ، شێوازێکیان هەڵبژێرە :</p>
 
             <!-- Two big choice cards -->
             <div class="age-prompt-cards">
@@ -1621,7 +1679,7 @@
                     <div class="age-card-icon">😊</div>
                     <div class="age-card-label">هەموو تەمەنێک</div>
                     <div class="age-card-badge age-badge-safe">All Ages</div>
-                    <div class="age-card-desc">دەنگی سادە و خۆشەویستی — گونجاوی هەموو تەمەنێک</div>
+                    <div class="age-card-desc">دەنگ و قسەی سادە و پێکەنیناوی — گونجاو بۆ هەموو تەمەنێک</div>
                 </button>
 
                 <!-- +18 card -->
@@ -1629,14 +1687,14 @@
                     <div class="age-card-icon">🔥</div>
                     <div class="age-card-label">مەترسیدار (+18)</div>
                     <div class="age-card-badge age-badge-adult">+18</div>
-                    <div class="age-card-desc">دەنگی کوردی تیژ و قورس — تەنها بۆ مەترسیدار</div>
+                    <div class="age-card-desc">دەنگ و قسەی ڕەق و جنێو — تەنها بۆ سەروو هەژدە ساڵ گونجاوە</div>
                     <div class="age-card-warn">⚠️ ناگونجێت بۆ منداڵان</div>
                 </button>
 
             </div>
 
             <!-- Info note at bottom -->
-            <p class="age-prompt-note">📌 دەتوانیت ئەم هەڵبژاردنە لە ناو <strong>ڕێکخستنەکان</strong> هەر کاتێک بگۆڕیت
+            <p class="age-prompt-note">📌 دەتوانیت ئەم هەڵبژاردنە لە ناو <strong>ڕێکخستنەکان</strong> هەر کاتێک بتەوێت بیگۆڕیت
             </p>
 
         </div>

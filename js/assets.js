@@ -81,7 +81,7 @@ const ASSETS_MANIFEST = {
 
     shootingFx: ['attaker/shooting/blood.png'],
 
-    backgrounds: ['15.png', '16.png', '17.png', 'god of war.png', 'hogwarts school.png', 'hogwarts school great hall.png', 'shrek house.png', 'tekken.png', 'mama vana house.png', 'minecraft.png', 'terminator.png']
+    backgrounds: ['15.png', '16.png', '17.png', 'Gothic City.png', 'Arabic City.png', 'Snowy Village.png', 'god of war.png', 'hogwarts school.png', 'hogwarts school great hall.png', 'shrek house.png', 'tekken.png', 'mama vana house.png', 'minecraft.png', 'terminator.png']
 };
 
 // Automatically sync all items from ITEM_COORDINATES in coordinates.js

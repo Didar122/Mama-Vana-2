@@ -184,6 +184,9 @@ class GameEngine {
             // Ignore stage clicks if tapping on spell buttons, chest, or block modal
             const target = e.target;
             if (target && target.closest) {
+                if (target.closest('#batman-signal-rig, #batman-bats-container, #lataman-speaker-rig, #santa-temperature-device')) {
+                    return;
+                }
                 if (target.closest('#game-elder-wand-spell-bar') ||
                     target.closest('.elder-wand-spell-bar') ||
                     target.closest('.stive-chest-container') ||
@@ -197,6 +200,7 @@ class GameEngine {
                     return;
                 }
             }
+            if (window.legendaryEffects?._santaWeather?.frozen) return;
 
             const clientX = e.clientX || (e.touches && e.touches[0].clientX);
             const clientY = e.clientY || (e.touches && e.touches[0].clientY);
@@ -218,7 +222,9 @@ class GameEngine {
             const charRight = bossX + halfW;
             const charTop = bossY - topH;
             const charBottom = bossY + botH;
-            const isCharHit = (localX >= charLeft && localX <= charRight && localY >= charTop && localY <= charBottom);
+            const isLatamanSequenceActive = this.bossEl?.classList.contains('lataman-character-sequence');
+            const isCharHit = !isLatamanSequenceActive && (localX >= charLeft && localX <= charRight && localY >= charTop && localY <= charBottom);
+            if (target?.closest?.('#batman-signal-projection') && !isCharHit) return;
 
             this.pointerState = {
                 active: true,
@@ -5445,6 +5451,7 @@ class GameEngine {
 
     showSpeechBubble(text, duration = 2000) {
         if (!this.speechBubbleEl) return;
+        if (this.bossEl?.classList.contains('lataman-character-sequence')) return;
         this.speechBubbleEl.textContent = text;
         this.speechBubbleEl.classList.add('visible');
 
@@ -5937,12 +5944,15 @@ class GameEngine {
 
         const dt = (timestamp - this.lastFrameTime) / 1000;
         this.lastFrameTime = timestamp;
+        const santaFrozen = window.legendaryEffects?._santaWeather?.frozen;
 
-        if (!this.fatalityActive) window.physicsEngine.update(dt);
+        if (!this.fatalityActive && !santaFrozen) window.physicsEngine.update(dt);
 
         const safeDt = Math.min(0.05, dt || 0.016);
-        this.updateSpidersPhysics(safeDt);
-        this.updateFlowersPhysics(safeDt);
+        if (!santaFrozen) {
+            this.updateSpidersPhysics(safeDt);
+            this.updateFlowersPhysics(safeDt);
+        }
 
         if (this.speechBubbleEl && this.speechBubbleEl.classList.contains('visible')) {
             const bossX = window.physicsEngine.x;

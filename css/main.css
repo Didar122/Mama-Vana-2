@@ -623,6 +623,249 @@ html {
 }
 
 /* ===================================================
+   Screen 3: Mini Games Catalog
+   =================================================== */
+#screen-mini-games {
+    flex-direction: column;
+    overflow-y: auto;
+    padding: clamp(14px, 2.5vh, 24px) clamp(14px, 3vw, 36px) 0;
+    background:
+        linear-gradient(135deg, rgba(10, 7, 20, 0.48), rgba(20, 10, 40, 0.62)),
+        url('../backgrounds/main_menu.png') center center / cover no-repeat;
+}
+
+.mini-games-topbar {
+    position: relative;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    direction: ltr;
+}
+
+.mini-games-topbar .btn-cartoon {
+    justify-self: start;
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    direction: rtl;
+}
+
+.mini-games-title {
+    direction: rtl;
+    color: #ffa502;
+    font-size: 1.8rem;
+    font-weight: 900;
+    text-align: center;
+    text-shadow: 2px 3px 0 #d35400, 3px 5px 0 #000;
+}
+
+.mini-games-main {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 18px 10px 160px;
+}
+
+.mini-games-intro {
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 800;
+    text-align: center;
+    text-shadow: 1px 2px 0 #153c46;
+}
+
+.mini-games-pond {
+    position: relative;
+    width: min(100%, 780px);
+    padding: 22px;
+    overflow: hidden;
+    border: 4px solid #fff;
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(244, 171, 50, 0.96), rgba(166, 73, 35, 0.97));
+    box-shadow: 0 9px 0 #9b4827, 0 18px 34px rgba(0, 0, 0, 0.35);
+}
+
+.mini-games-pond-label {
+    margin: 0 0 16px;
+    color: #fff8e8;
+    font-size: 1rem;
+    font-weight: 800;
+    text-align: center;
+    text-shadow: 1px 2px 0 #7d3d24;
+}
+
+.mini-games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 360px));
+    justify-content: center;
+    gap: 20px;
+}
+
+.mini-game-card {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    min-height: 340px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 11px;
+    overflow: hidden;
+    padding: 20px 20px 24px;
+    border: 4px solid #c5fff5;
+    border-radius: 22px;
+    background: linear-gradient(155deg, #58c9d1, #1686a8 66%, #105b80);
+    box-shadow: 0 7px 0 #0d526d, 0 12px 18px rgba(18, 45, 66, 0.3), inset 0 0 24px rgba(220, 255, 250, 0.2);
+    color: #f3ffff;
+    text-align: center;
+    text-decoration: none;
+    transition: box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.mini-game-card:hover {
+    background: linear-gradient(155deg, #72dce0, #1b98b5 66%, #126a8e);
+    box-shadow: 0 9px 0 #0d526d, 0 15px 24px rgba(18, 45, 66, 0.36), inset 0 0 26px rgba(220, 255, 250, 0.24);
+}
+
+.mini-game-card:focus-visible,
+#btn-mini-games-back:focus-visible {
+    outline: 3px solid #65e7ff;
+    outline-offset: 4px;
+}
+
+.mini-game-art {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    width: 220px;
+    height: 165px;
+    place-items: center;
+    transform: translateY(8px);
+}
+
+.mini-game-water-life {
+    position: absolute;
+    z-index: 0;
+    inset: 4px;
+    overflow: hidden;
+    border-radius: 18px;
+    pointer-events: none;
+}
+
+.mini-game-art > img {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 7px 4px rgba(2, 37, 54, 0.55));
+    animation: mini-game-float 4s ease-in-out infinite;
+}
+
+.mini-game-fish {
+    position: absolute;
+    z-index: 1;
+    width: 48px;
+    height: 34px;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.mini-game-fish--26 {
+    top: 14%;
+    left: -52px;
+    animation: mini-game-swim-right 11s linear infinite;
+}
+
+.mini-game-fish--10 {
+    top: 82%;
+    right: -48px;
+    width: 42px;
+    height: 30px;
+    transform: scaleX(-1);
+    animation: mini-game-swim-left 13s linear infinite;
+}
+
+.mini-game-bubbles {
+    position: absolute;
+    z-index: 3;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.mini-game-bubbles i {
+    position: absolute;
+    bottom: -20px;
+    width: 18px;
+    height: 18px;
+    background: url("../mini%20games/Vana%20Masigr/assets/sprites/spr_bubble.png") center / contain no-repeat;
+    opacity: 0;
+    animation: mini-game-bubble-rise 5s linear infinite;
+}
+
+.mini-game-bubbles i:nth-child(1) { left: 11%; animation-delay: -1.1s; animation-duration: 5.4s; }
+.mini-game-bubbles i:nth-child(2) { left: 28%; width: 13px; height: 13px; animation-delay: -3.2s; animation-duration: 4.6s; }
+.mini-game-bubbles i:nth-child(3) { left: 48%; animation-delay: -0.4s; animation-duration: 5.9s; }
+.mini-game-bubbles i:nth-child(4) { left: 66%; width: 14px; height: 14px; animation-delay: -2.3s; animation-duration: 4.2s; }
+.mini-game-bubbles i:nth-child(5) { left: 83%; animation-delay: -4.1s; animation-duration: 5.1s; }
+.mini-game-bubbles i:nth-child(6) { left: 39%; width: 12px; height: 12px; animation-delay: -1.8s; animation-duration: 4.8s; }
+
+@keyframes mini-game-swim-right {
+    from { transform: translateX(0) translateY(0); }
+    to { transform: translateX(400px) translateY(-8px); }
+}
+
+@keyframes mini-game-float {
+    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+    50% { transform: translateY(-6px) rotate(1.5deg); }
+}
+
+@keyframes mini-game-swim-left {
+    from { transform: translateX(0) translateY(0) scaleX(-1); }
+    to { transform: translateX(-400px) translateY(-10px) scaleX(-1); }
+}
+
+@keyframes mini-game-bubble-rise {
+    0% { opacity: 0; transform: translateY(0) scale(0.7); }
+    15% { opacity: 0.85; }
+    85% { opacity: 0.75; }
+    100% { opacity: 0; transform: translateY(-340px) scale(1.05); }
+}
+
+.mini-game-card strong { font-size: 1.35rem; font-weight: 900; text-shadow: 0 2px 2px rgba(4, 52, 75, 0.45); }
+.mini-game-card small { color: #e6fbff; font-size: 0.92rem; font-weight: 700; }
+.mini-game-card strong,
+.mini-game-card small { position: relative; z-index: 1; }
+
+@media (max-width: 600px) {
+    #screen-mini-games { padding: 12px 12px 0; }
+    .mini-games-topbar { grid-template-columns: auto 1fr; }
+    .mini-games-topbar .btn-cartoon { padding: 7px 10px; font-size: 0.8rem; }
+    .mini-games-title { justify-self: end; font-size: 1.35rem; }
+    .mini-games-main { justify-content: flex-start; padding: 18px 4px 185px; }
+    .mini-games-pond { padding: 17px 12px; border-radius: 18px; }
+    .mini-games-grid { grid-template-columns: minmax(0, 1fr); }
+    .mini-game-card { min-height: 320px; }
+    .mini-game-art { width: min(220px, 100%); height: 165px; }
+    #screen-mini-games .radio-widget { right: 12px; bottom: 10px; transform: scale(.88) rotate(-2deg); transform-origin: bottom right; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #screen-mini-games *,
+    #screen-mini-games *::before,
+    #screen-mini-games *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+/* ===================================================
    General Modals (Shop, Settings, About)
    =================================================== */
 .game-modal {

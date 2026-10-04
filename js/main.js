@@ -13,6 +13,7 @@ class GameApp {
         this.screens = {
             loading: document.getElementById('screen-loading'),
             menu: document.getElementById('screen-menu'),
+            mini_games: document.getElementById('screen-mini-games'),
             customizer: document.getElementById('screen-customizer'),
             game: document.getElementById('screen-game'),
             dev_editor: document.getElementById('screen-dev-editor')
@@ -98,6 +99,22 @@ class GameApp {
             btnPlay.onclick = () => {
                 window.soundEngine.playButton();
                 this.showScreen('game');
+            };
+        }
+
+        const btnMiniGames = document.getElementById('btn-menu-mini-games');
+        if (btnMiniGames) {
+            btnMiniGames.onclick = () => {
+                window.soundEngine.playButton();
+                this.showScreen('mini_games');
+            };
+        }
+
+        const btnMiniGamesBack = document.getElementById('btn-mini-games-back');
+        if (btnMiniGamesBack) {
+            btnMiniGamesBack.onclick = () => {
+                window.soundEngine.playButton();
+                this.showScreen('menu');
             };
         }
 

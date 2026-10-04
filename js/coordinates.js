@@ -264,7 +264,10 @@ const ITEM_COORDINATES = {
         "5.png": { "x": -507, "y": -358, "scale": 0.381, "scaleX": 1, "scaleY": 1, "rotation": 0, "zIndex": 5, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } },
         "6.png": { "x": -530, "y": -600, "scale": 0.42, "scaleX": 1, "scaleY": 1, "rotation": 0, "zIndex": 5, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } },
         "7.png": { "x": -431, "y": -475, "scale": 0.515, "scaleX": 1, "scaleY": 1, "rotation": 0, "zIndex": 5, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } },
-        "8.png": { "x": -431, "y": -475, "scale": 0.515, "scaleX": 1, "scaleY": 1, "rotation": 0, "zIndex": 5, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } }
+        "8.png": { "x": -431, "y": -475, "scale": 0.515, "scaleX": 1, "scaleY": 1, "rotation": 0, "zIndex": 5, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } },
+        "9.png": { "x": -444, "y": -346, "scale": 0.44, "scaleX": 1, "scaleY": 1, "rotation": 0, "zIndex": 5, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } },
+        "10.png": { "x": -496, "y": -336, "scale": 0.42, "scaleX": 1, "scaleY": 1, "rotation": 0, "zIndex": 5, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } },
+        "11.png": { "x": -492, "y": -362, "scale": 0.42, "scaleX": 1, "scaleY": 1, "rotation": 0, "zIndex": 5, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } }
     },
 
     "head_shapes": {
@@ -425,7 +428,8 @@ const ITEM_COORDINATES = {
         "265.png": { "x": -27, "y": -7, "scale": 1, "scaleX": 1, "scaleY": 1, "rotation": 0, "zIndex": 40, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } },
         "267.png": { "x": -66, "y": -73, "scale": 1, "scaleX": 1, "scaleY": 1, "rotation": 0, "zIndex": 40, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } },
         "268.png": { "x": -149, "y": -176, "scale": 0.52, "scaleX": 1.1, "scaleY": 1, "rotation": 5, "zIndex": 40, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } },
-        "269.png": { "x": -65, "y": -79, "scale": 1, "scaleX": 1, "scaleY": 1, "rotation": 0, "zIndex": 40, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } }
+        "269.png": { "x": -65, "y": -79, "scale": 1, "scaleX": 1, "scaleY": 1, "rotation": 0, "zIndex": 40, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } },
+        "13.png": { "x": -181, "y": -162, "scale": 0.5, "scaleX": 1.1, "scaleY": 1, "rotation": 2, "zIndex": 40, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } }
     },
 
     "head_enquipments": {
@@ -449,7 +453,9 @@ const ITEM_COORDINATES = {
         "2.png": { "x": -130, "y": -138, "scale": 0.48, "scaleX": 1, "scaleY": 1, "rotation": 0, "zIndex": 55, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } },
         "3.png": { "x": -142, "y": -130, "scale": 0.46, "scaleX": 1, "scaleY": 1, "rotation": 0, "zIndex": 55, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } },
         "4.png": { "x": -135, "y": -121, "scale": 0.52, "scaleX": 1, "scaleY": 1, "rotation": 0, "zIndex": 55, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } },
-        "5.png": { "x": -123, "y": -280, "scale": 0.66, "scaleX": 1, "scaleY": 0.95, "rotation": 0, "zIndex": 55, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } }
+        "5.png": { "x": -123, "y": -280, "scale": 0.66, "scaleX": 1, "scaleY": 0.95, "rotation": 0, "zIndex": 55, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } },
+        "6.png": { "x": -136, "y": -242, "scale": 0.82, "scaleX": 1, "scaleY": 0.95, "rotation": 0, "zIndex": 55, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } },
+        "7.png": { "x": -172, "y": -330, "scale": 0.46, "scaleX": 0.9, "scaleY": 1.05, "rotation": 1, "zIndex": 55, "mirror": { "enabled": false, "distance": 0, "flipSides": false, "tilt": 0, "rotateOpposite": false } }
     },
 
     "body_enquipments": {

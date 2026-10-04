@@ -30,6 +30,20 @@ class LegendaryEffectsEngine {
         this._kurdishLamp = null;
         this._kurdishLampContainer = null;
         this._kurdishShadow = null;
+        this._batmanSignal = null;
+        this._batmanTimeout = null;
+        this._batmanRaf = null;
+        this._latamanSpeaker = null;
+        this._latamanSequenceTimeout = null;
+        this._latamanImpactTimeout = null;
+        this._latamanFadeTimeout = null;
+        this._latamanRevealTimeout = null;
+        this._latamanDustInterval = null;
+        this._latamanDust = null;
+        this._latamanTransientAudio = [];
+        this._latamanHasFallen = false;
+        this._latamanFallInProgress = false;
+        this._santaWeather = null;
     }
 
     // =========================================================================
@@ -92,7 +106,14 @@ class LegendaryEffectsEngine {
 
     notifySetEquipped(setId) {
         const set = CARD_SETS.find(s => s.id === setId);
-        if (!set || set.rank !== 'legendary') return;
+        if (!set) return;
+        if (set.rank !== 'legendary' || !set.hasEffect) {
+            if (this.activeEffectId || this._batmanSignal) this.stopEffect();
+            return;
+        }
+        if (this.activeEffectId !== setId && (this.activeEffectId || this._batmanSignal)) {
+            this.stopEffect();
+        }
         if (set.hasEffect && window.soundEngine) {
             window.soundEngine.stopRadio();
         }
@@ -111,6 +132,8 @@ class LegendaryEffectsEngine {
         this.isPaused = true;
         this._isRunning = false;
         this._pauseEffectAudio();
+        if (this.activeEffectId === 'lataman') this._pauseLatamanEffect();
+        if (this.activeEffectId === 'santa') this._pauseSantaEffect();
         if (this._snitch && this._snitch.audio) {
             try { this._snitch.audio.pause(); } catch (e) {}
         }
@@ -130,6 +153,9 @@ class LegendaryEffectsEngine {
         this._isRunning = false;
         if (prevId) {
             this._stopNamedEffect(prevId);
+        }
+        if (prevId !== 'batman' && this._batmanSignal) {
+            this._stopBatmanEffect();
         }
         this._clearAllTimers();
         this._pauseEffectAudio();
@@ -153,6 +179,9 @@ class LegendaryEffectsEngine {
             case 'terminator':     this._startTerminatorEffect(); break;
             case 'stive':         this._startStiveEffect(); break;
             case 'kurdish':       this._startKurdishEffect(); break;
+            case 'batman':        this._startBatmanEffect(); break;
+            case 'lataman':       this._startLatamanEffect(); break;
+            case 'santa':         this._startSantaEffect(); break;
         }
     }
 
@@ -167,6 +196,9 @@ class LegendaryEffectsEngine {
             case 'terminator':     this._stopTerminatorEffect(); break;
             case 'stive':         this._stopStiveEffect(); break;
             case 'kurdish':       this._stopKurdishEffect(); break;
+            case 'batman':        this._stopBatmanEffect(); break;
+            case 'lataman':       this._stopLatamanEffect(); break;
+            case 'santa':         this._stopSantaEffect(); break;
         }
     }
 
@@ -196,7 +228,7 @@ class LegendaryEffectsEngine {
     _addTimer(t) { this._timers.push(t); return t; }
 
     _hideAllEffectElements() {
-        const ids = ['legendary-effect-overlay','legendary-parti-logo','legendary-disco-lasers','legendary-golden-snitch','legendary-draco-candles','legendary-shrek-donkey','legendary-stive-chest','legendary-stive-blocks-modal','stive-cursor-preview','legendary-terminator-time','legendary-terminator-electric','legendary-terminator-bullets','legendary-terminator-repair','legendary-kurdish-lamp','legendary-kurdish-shadow'];
+        const ids = ['legendary-effect-overlay','legendary-parti-logo','legendary-disco-lasers','legendary-golden-snitch','legendary-draco-candles','legendary-shrek-donkey','legendary-stive-chest','legendary-stive-blocks-modal','stive-cursor-preview','legendary-terminator-time','legendary-terminator-electric','legendary-terminator-bullets','legendary-terminator-repair','legendary-kurdish-lamp','legendary-kurdish-shadow','batman-signal-rig','batman-signal-projection','batman-bats-container','lataman-speaker-rig','santa-temperature-device','santa-snowfall','santa-blizzard-fog','santa-frost-overlay'];
         ids.forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
@@ -1107,6 +1139,979 @@ class LegendaryEffectsEngine {
         if (overlay) overlay.style.background = '';
     }
 
+    _startSantaEffect() {
+        const stage = this._getStage();
+        if (!stage) return;
+
+        let weather = this._santaWeather;
+        if (!weather || !weather.device.isConnected || !weather.canvas.isConnected) {
+            const canvas = document.createElement('canvas');
+            canvas.id = 'santa-snowfall';
+            canvas.className = 'santa-snowfall';
+            canvas.setAttribute('aria-hidden', 'true');
+            stage.appendChild(canvas);
+            const fog = document.createElement('div');
+            fog.id = 'santa-blizzard-fog';
+            fog.className = 'santa-blizzard-fog';
+            fog.setAttribute('aria-hidden', 'true');
+            stage.appendChild(fog);
+            const frost = document.createElement('div');
+            frost.id = 'santa-frost-overlay';
+            frost.className = 'santa-frost-overlay';
+            frost.setAttribute('aria-hidden', 'true');
+            stage.appendChild(frost);
+            const device = document.createElement('div');
+            device.id = 'santa-temperature-device';
+            device.className = 'santa-temperature-device';
+            device.innerHTML = `
+                <div class="santa-temperature-readout" aria-hidden="true">
+                    <span class="santa-temperature-hot">گەرم</span>
+                    <span class="santa-temperature-value">0°</span>
+                    <span class="santa-temperature-cold">سارد</span>
+                </div>
+                <div class="santa-thermometer">
+                    <div class="santa-thermometer-track">
+                        <div class="santa-thermometer-fill"></div>
+                        <button class="santa-temperature-handle" type="button" role="slider" aria-label="پلەی گەرمی" aria-valuemin="-50" aria-valuemax="25" aria-valuenow="0">
+                            <span></span>
+                        </button>
+                    </div>
+                </div>`;
+            stage.appendChild(device);
+            weather = this._santaWeather = {
+                stage,
+                canvas,
+                context: canvas.getContext('2d'),
+                fog,
+                frost,
+                device,
+                track: device.querySelector('.santa-thermometer-track'),
+                handle: device.querySelector('.santa-temperature-handle'),
+                valueLabel: device.querySelector('.santa-temperature-value'),
+                temperature: 0.5,
+                particles: [],
+                waves: [],
+                jingleAudio: new Audio('assets/sets/santa/Jingle bells.mp3'),
+                windAudio: new Audio('assets/sets/santa/wind.mp3'),
+                freezeAudio: null,
+                freezeSoundPlayed: false,
+                raf: null,
+                lastTime: 0,
+                frozen: false,
+                freezing: false,
+                freezeTimeout: null,
+                originalPositionLock: window.physicsEngine?.isPositionLocked || false,
+                blinkLoopPaused: false,
+                dragging: false,
+                resizeHandler: null,
+                cleanup: null
+            };
+            weather.jingleAudio.loop = true;
+            weather.windAudio.loop = true;
+            if (!weather.context) {
+                console.error('Could not create the Santa snowfall canvas context.');
+                device.remove();
+                canvas.remove();
+                this._santaWeather = null;
+                return;
+            }
+
+            const updateTemperatureFromPointer = event => {
+                const rect = weather.track.getBoundingClientRect();
+                if (!rect.height) return;
+                weather.temperature = Math.max(0, Math.min(1, 1 - (event.clientY - rect.top) / rect.height));
+                this._updateSantaTemperature(weather);
+            };
+            const onPointerDown = event => {
+                event.preventDefault();
+                event.stopPropagation();
+                weather.dragging = true;
+                try { device.setPointerCapture(event.pointerId); } catch (_) {}
+                updateTemperatureFromPointer(event);
+            };
+            const onPointerMove = event => {
+                if (!weather.dragging) return;
+                updateTemperatureFromPointer(event);
+                event.preventDefault();
+            };
+            const onPointerUp = event => {
+                if (!weather.dragging) return;
+                weather.dragging = false;
+                try { device.releasePointerCapture(event.pointerId); } catch (_) {}
+            };
+            const onKeyDown = event => {
+                let nextTemperature = weather.temperature;
+                if (event.key === 'ArrowUp' || event.key === 'ArrowRight') nextTemperature += 0.05;
+                else if (event.key === 'ArrowDown' || event.key === 'ArrowLeft') nextTemperature -= 0.05;
+                else if (event.key === 'Home') nextTemperature = 0;
+                else if (event.key === 'End') nextTemperature = 1;
+                else return;
+                event.preventDefault();
+                weather.temperature = Math.max(0, Math.min(1, nextTemperature));
+                this._updateSantaTemperature(weather);
+            };
+            device.addEventListener('pointerdown', onPointerDown);
+            device.addEventListener('pointermove', onPointerMove);
+            device.addEventListener('pointerup', onPointerUp);
+            device.addEventListener('pointercancel', onPointerUp);
+            weather.handle.addEventListener('keydown', onKeyDown);
+            weather.resizeHandler = () => this._resizeSantaSnowfall(weather);
+            window.addEventListener('resize', weather.resizeHandler);
+            weather.cleanup = () => {
+                device.removeEventListener('pointerdown', onPointerDown);
+                device.removeEventListener('pointermove', onPointerMove);
+                device.removeEventListener('pointerup', onPointerUp);
+                device.removeEventListener('pointercancel', onPointerUp);
+                weather.handle.removeEventListener('keydown', onKeyDown);
+                window.removeEventListener('resize', weather.resizeHandler);
+            };
+            this._resizeSantaSnowfall(weather);
+        }
+
+        weather.canvas.style.display = 'block';
+        weather.fog.style.display = 'block';
+        weather.frost.style.display = 'block';
+        weather.device.style.display = 'flex';
+        weather.device.style.visibility = 'visible';
+        this._updateSantaTemperature(weather);
+        if (weather.frozen) {
+            this._stopSantaSnowfall(weather);
+        } else {
+            this._animateSantaSnowfall(weather);
+        }
+    }
+
+    _updateSantaTemperature(weather) {
+        const temperature = weather.temperature;
+        const coldness = Math.max(0, Math.min(1, (0.5 - temperature) * 2));
+        const snowIntensity = temperature >= 0.5
+            ? (1 - temperature) * 0.7
+            : 0.35 + coldness * 1.65;
+        const wind = coldness * coldness;
+        const visualColdness = Math.pow(coldness, 2.2);
+        const shouldFreeze = temperature <= 0.005;
+        const physics = window.physicsEngine;
+        const degrees = Math.round(temperature <= 0.5
+            ? temperature * 100 - 50
+            : (temperature - 0.5) * 50);
+
+        weather.device.style.setProperty('--temperature-level', `${(1 - temperature) * 100}%`);
+        weather.device.querySelector('.santa-thermometer-fill').style.height = `${(1 - temperature) * 100}%`;
+        weather.handle.style.top = `${(1 - temperature) * 100}%`;
+        weather.handle.setAttribute('aria-valuenow', String(degrees));
+        weather.valueLabel.textContent = `${degrees}°`;
+        weather.canvas.dataset.intensity = String(snowIntensity);
+        weather.canvas.dataset.wind = String(wind);
+        weather.fog.style.opacity = String(coldness * 0.97);
+        weather.fog.style.backdropFilter = `blur(${coldness * 13}px)`;
+        weather.fog.style.setProperty('--santa-fog-opacity', String(coldness * 0.88));
+        weather.stage.classList.toggle('santa-blizzard', coldness > 0);
+        weather.stage.style.setProperty('--santa-character-saturation', String(1 - visualColdness * 0.55));
+        weather.stage.style.setProperty('--santa-character-brightness', String(1 - visualColdness * 0.5));
+
+        if (shouldFreeze && !weather.frozen && !weather.freezing) {
+            weather.freezing = true;
+            const { jingle, wind: windVolume } = this._getSantaMusicVolumes(temperature);
+            weather.jingleAudio.volume = jingle;
+            weather.windAudio.volume = windVolume;
+            this._stopSantaMusic(weather);
+            this._playSantaFreezeSound(weather);
+            weather.stage.classList.add('santa-freezing');
+            weather.canvas.classList.add('is-freezing');
+            weather.fog.classList.add('is-freezing');
+            weather.frost.classList.add('is-freezing');
+            weather.canvas.style.opacity = '0';
+            weather.fog.style.opacity = '0';
+            weather.freezeTimeout = setTimeout(() => {
+                weather.freezeTimeout = null;
+                if (this.activeEffectId !== 'santa' || this.isPaused || weather.temperature > 0.005) return;
+                weather.freezing = false;
+                weather.frozen = true;
+                weather.stage.classList.remove('santa-freezing');
+                weather.stage.classList.add('santa-frozen');
+                weather.canvas.classList.remove('is-freezing');
+                weather.canvas.style.opacity = '0';
+                weather.fog.classList.remove('is-freezing');
+                weather.fog.style.opacity = '0';
+                this._stopSantaSnowfall(weather);
+                weather.context.clearRect(0, 0, weather.stage.clientWidth, weather.stage.clientHeight);
+                if (physics) {
+                    physics.stopWalking();
+                    if (physics.walkTimer) {
+                        clearTimeout(physics.walkTimer);
+                        physics.walkTimer = null;
+                    }
+                    physics.isPositionLocked = true;
+                }
+                if (window.characterModel && window.gameEngine?.running && !weather.blinkLoopPaused) {
+                    window.characterModel.stopBlinkLoop();
+                    document.querySelectorAll('.mv-part-eyes').forEach(element => {
+                        element.style.opacity = '1';
+                    });
+                    weather.blinkLoopPaused = true;
+                }
+            }, 2000);
+        } else if (!shouldFreeze && (weather.freezing || weather.frozen)) {
+            clearTimeout(weather.freezeTimeout);
+            weather.freezeTimeout = null;
+            const wasFrozen = weather.frozen;
+            weather.freezing = false;
+            weather.frozen = false;
+            weather.freezeSoundPlayed = false;
+            weather.stage.classList.remove('santa-freezing', 'santa-frozen');
+            weather.canvas.classList.remove('is-freezing');
+            weather.canvas.style.opacity = '1';
+            weather.fog.classList.remove('is-freezing');
+            weather.fog.style.opacity = String(coldness * 0.93);
+            weather.frost.classList.remove('is-freezing');
+            weather.frost.classList.add('is-thawing');
+            setTimeout(() => weather.frost.classList.remove('is-thawing'), 1200);
+            if (physics && wasFrozen) {
+                physics.isPositionLocked = weather.originalPositionLock;
+                if (!physics.isPositionLocked && window.gameEngine?.running && !physics.walkActive && !physics.walkTimer) {
+                    physics.scheduleWalk();
+                }
+            }
+            if (window.characterModel && window.gameEngine?.running && weather.blinkLoopPaused) {
+                window.characterModel.startBlinkLoop();
+                weather.blinkLoopPaused = false;
+            }
+        }
+
+        if (physics && !shouldFreeze && !weather.freezing && !weather.frozen) {
+            physics.isPositionLocked = weather.originalPositionLock;
+            if (!physics.isPositionLocked && window.gameEngine?.running && !physics.walkActive && !physics.walkTimer) {
+                physics.scheduleWalk();
+            }
+        }
+        if (weather.frozen || weather.freezing) {
+            if (window.characterModel && window.gameEngine?.running && weather.frozen && !weather.blinkLoopPaused) {
+                window.characterModel.stopBlinkLoop();
+                document.querySelectorAll('.mv-part-eyes').forEach(element => {
+                    element.style.opacity = '1';
+                });
+                weather.blinkLoopPaused = true;
+            }
+        }
+
+        if (weather.frozen) this._stopSantaSnowfall(weather);
+        else if (!this.isPaused) {
+            this._animateSantaSnowfall(weather);
+            if (!weather.freezing) this._updateSantaMusic(weather);
+        }
+    }
+
+    _updateSantaMusic(weather) {
+        if (!weather || weather.freezing || weather.frozen || this.isPaused) return;
+        const { jingle, wind } = this._getSantaMusicVolumes(weather.temperature);
+        weather.jingleAudio.volume = jingle;
+        weather.windAudio.volume = wind;
+        for (const audio of [weather.jingleAudio, weather.windAudio]) {
+            if (audio.paused) {
+                const playback = audio.play();
+                if (playback) playback.catch(error => console.warn(`Could not play Santa audio "${audio.src}":`, error));
+            }
+        }
+    }
+
+    _getSantaMusicVolumes(temperature) {
+        const level = Math.max(0, Math.min(1, temperature));
+        return {
+            jingle: level <= 0.5 ? level * 0.5 : 0.25 + (level - 0.5) * 1.5,
+            wind: level <= 0.5 ? 1 - level * 1.8 : (1 - level) * 0.2
+        };
+    }
+
+    _stopSantaMusic(weather) {
+        if (!weather) return;
+        weather.jingleAudio.pause();
+        weather.windAudio.pause();
+        weather.jingleAudio.currentTime = 0;
+        weather.windAudio.currentTime = 0;
+    }
+
+    _playSantaFreezeSound(weather) {
+        if (weather.freezeSoundPlayed) return;
+        weather.freezeSoundPlayed = true;
+        const audio = new Audio('assets/sets/santa/freezing-g-effect.mp3');
+        audio.volume = 1;
+        weather.freezeAudio = audio;
+        const playback = audio.play();
+        if (playback) playback.catch(error => console.warn(`Could not play Santa freeze audio "${audio.src}":`, error));
+    }
+
+    _resizeSantaSnowfall(weather) {
+        const width = weather.stage.clientWidth;
+        const height = weather.stage.clientHeight;
+        const pixelRatio = Math.min(2, window.devicePixelRatio || 1);
+        weather.canvas.width = Math.round(width * pixelRatio);
+        weather.canvas.height = Math.round(height * pixelRatio);
+        weather.canvas.style.width = `${width}px`;
+        weather.canvas.style.height = `${height}px`;
+        weather.context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    }
+
+    _animateSantaSnowfall(weather) {
+        if (weather.raf !== null || weather.frozen || this.isPaused) return;
+        const frame = timestamp => {
+            weather.raf = null;
+            if (this.activeEffectId !== 'santa' || this.isPaused || weather.frozen || !weather.canvas.isConnected) return;
+
+            const width = weather.stage.clientWidth;
+            const height = weather.stage.clientHeight;
+            const context = weather.context;
+            const delta = weather.lastTime ? Math.min(0.05, (timestamp - weather.lastTime) / 1000) : 0.016;
+            const intensity = Number(weather.canvas.dataset.intensity) || 0;
+            const wind = Number(weather.canvas.dataset.wind) || 0;
+            const targetCount = Math.min(760, Math.round(intensity * 360));
+            const windSpeed = wind * (160 + intensity * 1800);
+            const fallSpeed = Math.max(24, (55 + intensity * 70) * (1 - wind * 0.88));
+            weather.lastTime = timestamp;
+
+            while (weather.particles.length < targetCount) {
+                weather.particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    sizeFactor: 0.5 + Math.random(),
+                    speedFactor: 0.65 + Math.random() * 0.7,
+                    phase: Math.random() * Math.PI * 2
+                });
+            }
+            if (weather.particles.length > targetCount) weather.particles.length = targetCount;
+
+            context.clearRect(0, 0, width, height);
+            context.fillStyle = 'rgba(245, 250, 255, 0.88)';
+            for (const flake of weather.particles) {
+                flake.radius = (1.2 + intensity * 3.2) * flake.sizeFactor;
+                flake.speed = fallSpeed * flake.speedFactor;
+                flake.phase += delta * (1.2 + wind * 2);
+                flake.x += (-windSpeed + Math.sin(flake.phase) * (8 + wind * 16)) * delta;
+                flake.y += flake.speed * delta;
+                if (flake.y > height + flake.radius) {
+                    flake.y = -flake.radius;
+                    flake.x = Math.random() * width;
+                }
+                if (flake.x < -flake.radius) {
+                    flake.x = width + flake.radius;
+                    flake.y = Math.random() * height;
+                }
+                context.beginPath();
+                context.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+                context.fill();
+            }
+
+            if (wind > 0.06) {
+                context.beginPath();
+                context.strokeStyle = `rgba(232, 245, 255, ${0.12 + wind * 0.32})`;
+                context.lineWidth = 1 + wind * 2.4;
+                const waveCount = Math.round(3 + wind * 9);
+                while (weather.waves.length < waveCount) {
+                    const index = weather.waves.length;
+                    const laneGap = height / waveCount;
+                    weather.waves.push({
+                        lane: index,
+                        x: ((index + Math.random() * 0.3) / waveCount) * width,
+                        y: (index + 0.5) * laneGap + (Math.random() - 0.5) * laneGap * 0.28,
+                        speed: 110 + Math.random() * 250,
+                        length: 70 + Math.random() * 110,
+                        amplitude: 4 + Math.random() * 9
+                    });
+                }
+                weather.waves.length = waveCount;
+                for (const wave of weather.waves) {
+                    wave.x -= wave.speed * (0.35 + wind) * delta;
+                    const length = wave.length * (0.8 + wind * 1.6);
+                    const waveHeight = wave.amplitude * (0.7 + wind * 1.8);
+                    if (wave.x + length < 0) {
+                        wave.x = width + 60 + Math.random() * 240;
+                        const laneGap = height / waveCount;
+                        wave.y = (wave.lane + 0.5) * laneGap + (Math.random() - 0.5) * laneGap * 0.28;
+                        wave.speed = 110 + Math.random() * 250;
+                    }
+                    context.moveTo(wave.x, wave.y);
+                    context.bezierCurveTo(
+                        wave.x + length * 0.28, wave.y - waveHeight,
+                        wave.x + length * 0.68, wave.y + waveHeight,
+                        wave.x + length, wave.y
+                    );
+                }
+                context.stroke();
+            }
+
+            weather.raf = requestAnimationFrame(frame);
+        };
+        weather.raf = requestAnimationFrame(frame);
+    }
+
+    _stopSantaSnowfall(weather) {
+        if (weather.raf !== null) {
+            cancelAnimationFrame(weather.raf);
+            weather.raf = null;
+        }
+        weather.lastTime = 0;
+    }
+
+    _pauseSantaEffect() {
+        const weather = this._santaWeather;
+        if (!weather) return;
+        this._stopSantaSnowfall(weather);
+        this._stopSantaMusic(weather);
+        if (weather.freezing) {
+            clearTimeout(weather.freezeTimeout);
+            weather.freezeTimeout = null;
+            weather.freezing = false;
+            weather.stage.classList.remove('santa-freezing');
+            weather.canvas.classList.remove('is-freezing');
+            weather.canvas.style.opacity = '1';
+            weather.fog.classList.remove('is-freezing');
+            weather.frost.classList.remove('is-freezing');
+            weather.fog.style.opacity = String(Math.max(0, Math.min(1, (0.5 - weather.temperature) * 2)) * 0.97);
+        }
+    }
+
+    _stopSantaEffect() {
+        const weather = this._santaWeather;
+        if (!weather) return;
+        this._stopSantaSnowfall(weather);
+        this._stopSantaMusic(weather);
+        if (weather.freezeAudio) {
+            weather.freezeAudio.pause();
+            weather.freezeAudio.currentTime = 0;
+            weather.freezeAudio = null;
+        }
+        clearTimeout(weather.freezeTimeout);
+        weather.cleanup?.();
+        weather.stage.classList.remove('santa-frozen', 'santa-freezing', 'santa-blizzard');
+        weather.stage.style.removeProperty('--santa-character-saturation');
+        weather.stage.style.removeProperty('--santa-character-brightness');
+        weather.device.remove();
+        weather.canvas.remove();
+        if (window.physicsEngine) {
+            window.physicsEngine.isPositionLocked = weather.originalPositionLock;
+            if (!weather.originalPositionLock && window.gameEngine?.running) {
+                window.physicsEngine.scheduleWalk();
+            }
+        }
+        if (weather.blinkLoopPaused && window.characterModel && window.gameEngine?.running) {
+            window.characterModel.startBlinkLoop();
+        }
+        this._santaWeather = null;
+    }
+
+    _startBatmanEffect() {
+        const stage = this._getStage();
+        const boss = document.getElementById('game-boss-container');
+        if (!stage || !boss) return;
+        if (!this._batmanSignal?.hasEntered) boss.classList.add('batman-character-hidden');
+        let signal = this._batmanSignal;
+        if (!signal || !signal.el.isConnected) {
+            const rig = document.createElement('div');
+            rig.id = 'batman-signal-rig';
+            rig.className = 'batman-signal-rig';
+            rig.innerHTML = `
+                <div class="batman-signal-device" aria-label="Bat signal projector">
+                    <img class="batman-signal-base" src="assets/sets/batman/device bottom part.png" alt="" draggable="false">
+                    <img class="batman-signal-upper" src="assets/sets/batman/device upper part.png" alt="" draggable="false">
+                    <span class="batman-signal-control-panel">
+                        <button class="batman-signal-power" type="button" aria-label="Turn on bat signal" aria-pressed="false" title="Turn on bat signal"><span></span></button>
+                    </span>
+                </div>`;
+            stage.appendChild(rig);
+            const projection = document.createElement('div');
+            projection.className = 'batman-signal-projection';
+            projection.setAttribute('aria-hidden', 'true');
+            projection.innerHTML = `
+                <div class="batman-signal-beam"></div>
+                <img class="batman-signal-logo" src="assets/sets/batman/batman logo.png" alt="" draggable="false">`;
+            stage.appendChild(projection);
+            const swarm = document.createElement('div');
+            swarm.id = 'batman-bats-container';
+            swarm.className = 'batman-bats-container';
+            swarm.setAttribute('aria-hidden', 'true');
+            stage.appendChild(swarm);
+            signal = this._batmanSignal = {
+                el: rig,
+                projection,
+                swarm,
+                beam: projection.querySelector('.batman-signal-beam'),
+                logo: projection.querySelector('.batman-signal-logo'),
+                toggle: rig.querySelector('.batman-signal-power'),
+                upper: rig.querySelector('.batman-signal-upper'),
+                targetX: stage.clientWidth * 0.42,
+                targetY: stage.clientHeight * 0.22,
+                isOn: false,
+                hasEntered: false,
+                isDragging: false,
+                bats: [],
+                giantBat: null,
+                cleanup: null
+            };
+            const updateProjection = () => {
+                const sourceX = 189;
+                const sourceY = stage.clientHeight - 190;
+                signal.targetX = Math.max(sourceX + 70, Math.min(stage.clientWidth - 24, signal.targetX));
+                signal.targetY = Math.max(20, Math.min(stage.clientHeight * 0.5 - 8, signal.targetY));
+                const dx = signal.targetX - sourceX;
+                const dy = signal.targetY - sourceY;
+                const length = Math.hypot(dx, dy);
+                const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                rig.style.setProperty('--device-angle', `${angle + 10}deg`);
+                projection.style.left = `${sourceX}px`;
+                projection.style.top = `${sourceY}px`;
+                projection.style.setProperty('--signal-angle', `${angle}deg`);
+                projection.style.setProperty('--signal-length', `${length}px`);
+            };
+            const onDown = event => {
+                if (!signal.isOn) return;
+                event.preventDefault();
+                event.stopPropagation();
+                signal.isDragging = true;
+                const rect = stage.getBoundingClientRect();
+                signal.dragOffsetX = signal.targetX - (event.clientX - rect.left);
+                signal.dragOffsetY = signal.targetY - (event.clientY - rect.top);
+                projection.classList.add('is-dragging');
+                try { stage.setPointerCapture(event.pointerId); } catch (_) {}
+            };
+            const onMove = event => {
+                if (!signal.isDragging) return;
+                const rect = stage.getBoundingClientRect();
+                signal.targetX = event.clientX - rect.left + signal.dragOffsetX;
+                signal.targetY = event.clientY - rect.top + signal.dragOffsetY;
+                updateProjection();
+                event.preventDefault();
+            };
+            const onUp = event => {
+                if (!signal.isDragging) return;
+                signal.isDragging = false;
+                projection.classList.remove('is-dragging');
+                try { stage.releasePointerCapture(event.pointerId); } catch (_) {}
+            };
+            const setPower = isOn => {
+                signal.isOn = isOn;
+                rig.classList.toggle('is-on', isOn);
+                projection.style.display = isOn ? 'block' : 'none';
+                projection.classList.toggle('is-on', isOn);
+                signal.toggle.setAttribute('aria-pressed', String(isOn));
+                signal.toggle.setAttribute('aria-label', isOn ? 'Turn off bat signal' : 'Turn on bat signal');
+                signal.toggle.title = isOn ? 'Turn off bat signal' : 'Turn on bat signal';
+                try {
+                    const deviceSound = new Audio('assets/sets/batman/device off on sound.mp3');
+                    deviceSound.volume = 0.7;
+                    deviceSound.play().catch(() => {});
+                } catch (e) {}
+                if (isOn) {
+                    if (!signal.hasEntered) boss.classList.add('batman-character-hidden');
+                    this._batmanTimeout = setTimeout(() => {
+                        this._batmanTimeout = null;
+                        if (signal.isOn && !this.isPaused) this._startBatmanBatWave();
+                    }, 5000);
+                } else {
+                    clearTimeout(this._batmanTimeout);
+                    this._batmanTimeout = null;
+                    if (this._batmanRaf) cancelAnimationFrame(this._batmanRaf);
+                    this._batmanRaf = null;
+                    signal.bats = [];
+                    signal.swarm.replaceChildren();
+                    this._stopEffectAudio();
+                }
+            };
+            signal.toggle.addEventListener('mousedown', event => event.stopPropagation());
+            signal.toggle.addEventListener('touchstart', event => event.stopPropagation(), { passive: true });
+            signal.toggle.addEventListener('pointerdown', event => event.stopPropagation());
+            signal.toggle.addEventListener('click', () => setPower(!signal.isOn));
+            projection.querySelectorAll('.batman-signal-beam, .batman-signal-logo').forEach(target => {
+                target.addEventListener('pointerdown', onDown);
+            });
+            stage.addEventListener('pointermove', onMove);
+            stage.addEventListener('pointerup', onUp);
+            stage.addEventListener('pointercancel', onUp);
+            signal.cleanup = () => {
+                projection.querySelectorAll('.batman-signal-beam, .batman-signal-logo').forEach(target => {
+                    target.removeEventListener('pointerdown', onDown);
+                });
+                stage.removeEventListener('pointermove', onMove);
+                stage.removeEventListener('pointerup', onUp);
+                stage.removeEventListener('pointercancel', onUp);
+            };
+            signal.setPower = setPower;
+            signal.updateProjection = updateProjection;
+        }
+        signal.el.style.display = 'block';
+        signal.projection.style.display = signal.isOn ? 'block' : 'none';
+        signal.projection.classList.toggle('is-on', signal.isOn);
+        signal.swarm.style.display = 'block';
+        signal.updateProjection();
+        if (signal.isOn) {
+            signal.projection.style.display = 'block';
+            if (signal.bats.length) this._animateBatmanBatWave();
+            else if (!signal.hasEntered && !this._batmanTimeout) {
+                boss.classList.add('batman-character-hidden');
+                this._batmanTimeout = setTimeout(() => {
+                    this._batmanTimeout = null;
+                    if (signal.isOn && !this.isPaused) this._startBatmanBatWave();
+                }, 5000);
+            }
+        }
+    }
+
+    _startBatmanBatWave() {
+        const signal = this._batmanSignal;
+        const stage = this._getStage();
+        if (!signal || !stage || !signal.isOn) return;
+        this._playEffectAudio('assets/sets/batman/bats sound.mp3', false, 0.75);
+        const width = stage.clientWidth;
+        const height = stage.clientHeight;
+        const frames = [1, 2, 3].map(frame => `assets/sets/batman/batt frame${frame}.png`);
+        const count = Math.max(26, Math.min(42, Math.round(width * height / 35000)));
+        signal.swarm.replaceChildren();
+        signal.bats = [];
+        signal.giantBat?.el.remove();
+        signal.giantBat = null;
+        signal.hasEntered = false;
+        for (let index = 0; index < count; index++) {
+            const size = 175 + Math.random() * 165;
+            const bat = document.createElement('img');
+            bat.className = 'batman-bat';
+            bat.src = frames[index % frames.length];
+            bat.alt = '';
+            bat.draggable = false;
+            const x = -size - Math.random() * width * 0.28;
+            const y = (index / count) * height + (Math.random() - 0.5) * height * 0.1;
+            const speed = 850 + Math.random() * 500;
+            bat.style.width = `${size}px`;
+            bat.style.height = `${size}px`;
+            bat.style.opacity = `${0.62 + Math.random() * 0.38}`;
+            signal.swarm.appendChild(bat);
+            signal.bats.push({ el: bat, x, y, size, speed, frame: index % frames.length, frameTime: Math.random() * 0.12, revealed: false });
+        }
+        this._animateBatmanBatWave();
+    }
+
+    _animateBatmanBatWave() {
+        const signal = this._batmanSignal;
+        const stage = this._getStage();
+        const boss = document.getElementById('game-boss-container');
+        if (!signal || !stage || !boss || !signal.bats.length || !signal.isOn) return;
+        let previousTime = performance.now();
+        const revealAtMidpoint = () => {
+            if (signal.hasEntered) return;
+            signal.hasEntered = true;
+            boss.classList.remove('batman-character-hidden');
+            boss.classList.add('batman-character-entering');
+            const revealTimer = setTimeout(() => boss.classList.replace('batman-character-entering', 'batman-character-revealed'), 1350);
+            this._timers.push(revealTimer);
+        };
+        const addScreenCoveringBat = () => {
+            if (signal.giantBat) return;
+            const size = Math.max(stage.clientWidth, stage.clientHeight) * 1.7;
+            const bat = document.createElement('img');
+            bat.className = 'batman-bat batman-bat-screen-cover';
+            bat.src = 'assets/sets/batman/batt frame1.png';
+            bat.alt = '';
+            bat.draggable = false;
+            bat.style.width = `${size}px`;
+            bat.style.height = `${size}px`;
+            signal.swarm.appendChild(bat);
+            signal.giantBat = {
+                el: bat,
+                x: -size * 0.5,
+                y: stage.clientHeight * 0.5,
+                size,
+                speed: Math.max(stage.clientWidth * 1.6, 1100),
+                frame: 0,
+                frameTime: 0
+            };
+        };
+        const tick = now => {
+            if (this.activeEffectId !== 'batman' || this.isPaused || !signal.isOn) return;
+            const dt = Math.min(0.04, (now - previousTime) / 1000);
+            previousTime = now;
+            let remaining = 0;
+            for (const bat of signal.bats) {
+                if (bat.x < stage.clientWidth + bat.size) {
+                    bat.x += bat.speed * dt;
+                    remaining++;
+                    bat.frameTime += dt;
+                    if (bat.frameTime >= 0.12) {
+                        bat.frameTime = 0;
+                        bat.frame = (bat.frame + 1) % 3;
+                        bat.el.src = `assets/sets/batman/batt frame${bat.frame + 1}.png`;
+                    }
+                    bat.el.style.left = `${bat.x}px`;
+                    bat.el.style.top = `${bat.y}px`;
+                    if (!bat.revealed && bat.x + bat.size / 2 >= stage.clientWidth * 0.5) {
+                        bat.revealed = true;
+                        addScreenCoveringBat();
+                    }
+                }
+            }
+            if (signal.giantBat) {
+                const giant = signal.giantBat;
+                giant.x += giant.speed * dt;
+                giant.frameTime += dt;
+                if (giant.frameTime >= 0.14) {
+                    giant.frameTime = 0;
+                    giant.frame = (giant.frame + 1) % 3;
+                    giant.el.src = `assets/sets/batman/batt frame${giant.frame + 1}.png`;
+                }
+                giant.el.style.left = `${giant.x}px`;
+                giant.el.style.top = `${giant.y}px`;
+                if (!signal.hasEntered && giant.x >= stage.clientWidth * 0.5) revealAtMidpoint();
+                if (giant.x > stage.clientWidth + giant.size * 0.5) {
+                    giant.el.remove();
+                    signal.giantBat = null;
+                }
+            }
+            if (remaining || signal.giantBat) this._batmanRaf = requestAnimationFrame(tick);
+            else {
+                signal.bats = [];
+                signal.swarm.replaceChildren();
+                this._batmanRaf = null;
+            }
+        };
+        this._batmanRaf = requestAnimationFrame(tick);
+    }
+
+    _stopBatmanEffect() {
+        const signal = this._batmanSignal;
+        clearTimeout(this._batmanTimeout);
+        this._batmanTimeout = null;
+        if (this._batmanRaf) cancelAnimationFrame(this._batmanRaf);
+        this._batmanRaf = null;
+        signal?.cleanup?.();
+        signal?.el?.remove();
+        signal?.projection?.remove();
+        signal?.swarm?.remove();
+        signal?.giantBat?.el?.remove();
+        this._batmanSignal = null;
+        const boss = document.getElementById('game-boss-container');
+        boss?.classList.remove('batman-character-hidden', 'batman-character-entering', 'batman-character-revealed');
+    }
+
+    _startLatamanEffect() {
+        const stage = this._getStage();
+        const boss = document.getElementById('game-boss-container');
+        if (!stage || !boss) return;
+
+        let speaker = this._latamanSpeaker;
+        if (!speaker || !speaker.el.isConnected) {
+            const rig = document.createElement('div');
+            rig.id = 'lataman-speaker-rig';
+            rig.className = 'lataman-speaker-rig';
+            rig.innerHTML = `
+                <div class="lataman-speaker-device">
+                    <img class="lataman-pole" src="assets/sets/lataman/pole.png" alt="" draggable="false">
+                    <span class="lataman-speakers-wrap">
+                        <img class="lataman-speakers" src="assets/sets/lataman/speakers.png" alt="" draggable="false">
+                    </span>
+                    <span class="lataman-speaker-control-panel batman-signal-control-panel">
+                        <button class="batman-signal-power" type="button" aria-label="Turn on speakers" aria-pressed="false" title="Turn on speakers"><span></span></button>
+                    </span>
+                </div>`;
+            stage.appendChild(rig);
+            speaker = this._latamanSpeaker = {
+                el: rig,
+                toggle: rig.querySelector('.batman-signal-power'),
+                isOn: false,
+                setPower: null
+            };
+
+            const setPower = isOn => {
+                speaker.isOn = isOn;
+                rig.classList.toggle('is-on', isOn);
+                speaker.toggle.setAttribute('aria-pressed', String(isOn));
+                speaker.toggle.setAttribute('aria-label', isOn ? 'Turn off speakers' : 'Turn on speakers');
+                speaker.toggle.title = isOn ? 'Turn off speakers' : 'Turn on speakers';
+
+                if (isOn) {
+                    if (!this._latamanHasFallen) {
+                        boss.classList.add('lataman-character-hidden', 'lataman-character-sequence');
+                        document.getElementById('game-speech-bubble')?.classList.remove('visible');
+                    }
+                    this._playEffectAudio('assets/sets/lataman/lataman music.mp3', true, 0.55);
+                    this._startLatamanSequence(speaker, boss);
+                } else {
+                    this._stopEffectAudio();
+                    if (!this._latamanFallInProgress) {
+                        this._clearLatamanSequenceTimers();
+                        this._stopLatamanTransientAudio();
+                    }
+                }
+                this._playLatamanOneShot('assets/sets/lataman/speaker button click.mp3', 0.7);
+            };
+
+            for (const eventName of ['mousedown', 'pointerdown']) {
+                speaker.toggle.addEventListener(eventName, event => event.stopPropagation());
+            }
+            speaker.toggle.addEventListener('touchstart', event => event.stopPropagation(), { passive: true });
+            speaker.toggle.addEventListener('click', () => setPower(!speaker.isOn));
+            speaker.setPower = setPower;
+        }
+
+        speaker.el.style.display = 'block';
+        if (!this._latamanHasFallen && !this._latamanFallInProgress) {
+            boss.classList.add('lataman-character-hidden', 'lataman-character-sequence');
+            document.getElementById('game-speech-bubble')?.classList.remove('visible');
+        }
+        if (speaker.isOn) {
+            this._playEffectAudio('assets/sets/lataman/lataman music.mp3', true, 0.55);
+            this._startLatamanSequence(speaker, boss);
+        }
+    }
+
+    _startLatamanSequence(speaker, boss) {
+        if (!speaker.isOn || this._latamanHasFallen || this._latamanFallInProgress) return;
+        this._clearLatamanSequenceTimers();
+
+        this._latamanSequenceTimeout = setTimeout(() => {
+            this._latamanSequenceTimeout = null;
+            if (this.isPaused || !speaker.isOn) return;
+            this._playLatamanOneShot('assets/sets/lataman/falling.mp3', 0.85);
+            this._latamanSequenceTimeout = setTimeout(() => {
+                this._latamanSequenceTimeout = null;
+                if (!this.isPaused && speaker.isOn) this._beginLatamanFall(boss);
+            }, 5000);
+        }, 5000);
+    }
+
+    _beginLatamanFall(boss) {
+        const stage = this._getStage();
+        if (!stage || !boss || this._latamanHasFallen) return;
+
+        const physics = window.physicsEngine;
+        if (physics) {
+            physics.stopWalking();
+            if (physics.walkTimer) {
+                clearTimeout(physics.walkTimer);
+                physics.walkTimer = null;
+            }
+            physics.cancelDrag();
+            physics.x = stage.clientWidth / 2;
+            physics.vx = 0;
+            physics.applyTransform();
+        }
+
+        this._latamanFallInProgress = true;
+        boss.classList.remove('lataman-character-hidden', 'lataman-standing-up');
+        boss.classList.add('lataman-character-falling');
+        this._latamanImpactTimeout = setTimeout(() => {
+            this._latamanImpactTimeout = null;
+            if (this.isPaused || this.activeEffectId !== 'lataman') return;
+
+            boss.classList.remove('lataman-character-falling');
+            boss.classList.add('lataman-character-under');
+            this._playLatamanOneShot('assets/sets/lataman/hit ground.mp3', 0.9);
+            const dust = document.createElement('div');
+            dust.className = 'lataman-dust-smoke';
+            dust.setAttribute('aria-hidden', 'true');
+            dust.style.backgroundImage = 'url("assets/sets/lataman/dust smoke frame1.png")';
+            dust.style.backgroundPosition = '0% center';
+            dust.style.left = `${stage.clientWidth / 2}px`;
+            dust.style.top = `${stage.clientHeight * 0.46}px`;
+            dust.style.height = `${stage.clientHeight * 1.5}px`;
+            dust.style.width = `${stage.clientHeight}px`;
+            stage.appendChild(dust);
+            this._latamanDust = dust;
+
+            let frame = 1;
+            this._latamanDustInterval = setInterval(() => {
+                if (!dust.isConnected || frame >= 3) {
+                    clearInterval(this._latamanDustInterval);
+                    this._latamanDustInterval = null;
+                    return;
+                }
+                frame++;
+                dust.style.backgroundImage = `url("assets/sets/lataman/dust smoke frame${frame}.png")`;
+                dust.style.backgroundPosition = `${(frame - 1) * 50}% center`;
+            }, 400);
+
+            this._latamanFadeTimeout = setTimeout(() => {
+                this._latamanFadeTimeout = null;
+                dust.classList.add('is-fading');
+                this._latamanRevealTimeout = setTimeout(() => {
+                    this._latamanRevealTimeout = null;
+                    clearInterval(this._latamanDustInterval);
+                    this._latamanDustInterval = null;
+                    dust.remove();
+                    this._latamanDust = null;
+                    boss.classList.remove('lataman-character-under');
+                    boss.classList.remove('lataman-character-sequence');
+                    boss.classList.add('lataman-standing-up');
+                    this._latamanHasFallen = true;
+                    this._latamanFallInProgress = false;
+                    if (physics) physics.scheduleWalk();
+                    this._latamanRevealTimeout = setTimeout(() => {
+                        this._latamanRevealTimeout = null;
+                        if (this.activeEffectId === 'lataman' && window.gameEngine) {
+                            window.gameEngine.showSpeechBubble('ئاخخخخ ... خەریبوو بکەوم', 3200);
+                        }
+                    }, 700);
+                }, 500);
+            }, 1200);
+        }, 850);
+    }
+
+    _playLatamanOneShot(src, volume) {
+        try {
+            const audio = new Audio(src);
+            audio.volume = volume;
+            this._latamanTransientAudio.push(audio);
+            audio.addEventListener('ended', () => {
+                this._latamanTransientAudio = this._latamanTransientAudio.filter(item => item !== audio);
+            }, { once: true });
+            const playback = audio.play();
+            if (playback) playback.catch(error => console.warn(`Could not play Lataman audio "${src}":`, error));
+        } catch (error) {
+            console.warn(`Could not load Lataman audio "${src}":`, error);
+        }
+    }
+
+    _stopLatamanTransientAudio() {
+        for (const audio of this._latamanTransientAudio) {
+            audio.pause();
+        }
+        this._latamanTransientAudio = [];
+    }
+
+    _clearLatamanSequenceTimers() {
+        clearTimeout(this._latamanSequenceTimeout);
+        clearTimeout(this._latamanImpactTimeout);
+        clearTimeout(this._latamanFadeTimeout);
+        clearTimeout(this._latamanRevealTimeout);
+        clearInterval(this._latamanDustInterval);
+        this._latamanSequenceTimeout = null;
+        this._latamanImpactTimeout = null;
+        this._latamanFadeTimeout = null;
+        this._latamanRevealTimeout = null;
+        this._latamanDustInterval = null;
+    }
+
+    _pauseLatamanEffect() {
+        this._clearLatamanSequenceTimers();
+        this._stopLatamanTransientAudio();
+        if (this._latamanFallInProgress) {
+            this._latamanDust?.remove();
+            this._latamanDust = null;
+            this._latamanFallInProgress = false;
+            const boss = document.getElementById('game-boss-container');
+            boss?.classList.remove('lataman-character-falling', 'lataman-character-under', 'lataman-standing-up');
+            if (!this._latamanHasFallen) boss?.classList.add('lataman-character-hidden');
+        }
+    }
+
+    _stopLatamanEffect() {
+        this._clearLatamanSequenceTimers();
+        this._stopLatamanTransientAudio();
+        this._latamanDust?.remove();
+        this._latamanDust = null;
+        this._latamanSpeaker?.el?.remove();
+        this._latamanSpeaker = null;
+        this._latamanHasFallen = false;
+        this._latamanFallInProgress = false;
+        const boss = document.getElementById('game-boss-container');
+        boss?.classList.remove('lataman-character-hidden', 'lataman-character-falling', 'lataman-character-under', 'lataman-character-sequence', 'lataman-standing-up');
+    }
+
     notifyTerminatorHit() {
         if (this.activeEffectId !== 'terminator' || this.isPaused || !this._isRunning) return;
         this._terminatorHits++;
@@ -2002,4 +3007,3 @@ class LegendaryEffectsEngine {
 }
 
 window.legendaryEffects = new LegendaryEffectsEngine();
-
